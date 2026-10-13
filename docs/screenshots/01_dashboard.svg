@@ -1,0 +1,51 @@
+<svg width="900" height="520" viewBox="0 0 900 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="520" rx="16" fill="#0B0F19"/>
+  <rect x="1" y="1" width="898" height="518" rx="15" stroke="#1F2937" stroke-width="2"/>
+  
+  <!-- Window Header -->
+  <rect x="0" y="0" width="900" height="44" rx="16" fill="#111827"/>
+  <circle cx="24" cy="22" r="6" fill="#EF4444"/>
+  <circle cx="44" cy="22" r="6" fill="#F59E0B"/>
+  <circle cx="64" cy="22" r="6" fill="#10B981"/>
+  <text x="450" y="27" fill="#9CA3AF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="13" font-weight="500" text-anchor="middle">DupliSoft (MB.02) — High-Performance Duplicate File Engine</text>
+
+  <!-- Sidebar -->
+  <rect x="20" y="64" width="260" height="436" rx="12" fill="#111827" stroke="#1F2937"/>
+  <text x="40" y="98" fill="#F9FAFB" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="15" font-weight="700">Scan Target</text>
+  
+  <!-- Selected Directory Box -->
+  <rect x="36" y="116" width="228" height="74" rx="8" fill="#1F2937"/>
+  <text x="50" y="142" fill="#38BDF8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="12" font-weight="600">📁 /Users/mahesh/Documents</text>
+  <text x="50" y="164" fill="#9CA3AF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="11">42,850 Files • 86.4 GB</text>
+
+  <!-- Guardrails -->
+  <text x="40" y="224" fill="#9CA3AF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="12" font-weight="600" letter-spacing="0.05em">SYSTEM GUARDRAILS</text>
+  <rect x="36" y="238" width="228" height="38" rx="6" fill="#064E3B" stroke="#059669"/>
+  <text x="50" y="262" fill="#34D399" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="11" font-weight="500">🛡️ OS Root &amp; System Folders Protected</text>
+
+  <!-- Start Scan Button -->
+  <rect x="36" y="430" width="228" height="46" rx="10" fill="#3B82F6"/>
+  <text x="150" y="458" fill="#FFFFFF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="14" font-weight="600" text-anchor="middle">⚡ Start Blazing Scan</text>
+
+  <!-- Main Canvas -->
+  <rect x="300" y="64" width="580" height="436" rx="12" fill="#111827" stroke="#1F2937"/>
+  
+  <!-- Empty State / Welcome Screen -->
+  <circle cx="590" cy="220" r="48" fill="#1F2937"/>
+  <path d="M570 220 L585 235 L610 205" stroke="#38BDF8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="590" y="300" fill="#F9FAFB" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="18" font-weight="700" text-anchor="middle">Ready for Instant Deduplication</text>
+  <text x="590" y="328" fill="#9CA3AF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="13" text-anchor="middle">4-Stage Elimination Algorithm powered by Rust &amp; BLAKE3 SIMD</text>
+
+  <!-- Stats Grid -->
+  <rect x="330" y="360" width="160" height="70" rx="8" fill="#1F2937"/>
+  <text x="346" y="388" fill="#9CA3AF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="11">STAGE 1</text>
+  <text x="346" y="412" fill="#F9FAFB" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="13" font-weight="600">O(N) Size Filter</text>
+
+  <rect x="510" y="360" width="160" height="70" rx="8" fill="#1F2937"/>
+  <text x="526" y="388" fill="#9CA3AF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="11">STAGE 2</text>
+  <text x="526" y="412" fill="#F9FAFB" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="13" font-weight="600">32 KB Chunk Hash</text>
+
+  <rect x="690" y="360" width="160" height="70" rx="8" fill="#1F2937"/>
+  <text x="706" y="388" fill="#9CA3AF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="11">STAGE 3 &amp; 4</text>
+  <text x="706" y="412" fill="#F9FAFB" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="13" font-weight="600">Rayon Multithreading</text>
+</svg>

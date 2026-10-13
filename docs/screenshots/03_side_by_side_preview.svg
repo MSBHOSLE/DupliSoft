@@ -1,0 +1,46 @@
+<svg width="900" height="520" viewBox="0 0 900 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="520" rx="16" fill="#0B0F19"/>
+  <rect x="1" y="1" width="898" height="518" rx="15" stroke="#1F2937" stroke-width="2"/>
+  
+  <!-- Modal Header -->
+  <rect x="0" y="0" width="900" height="52" rx="16" fill="#111827"/>
+  <text x="32" y="32" fill="#F9FAFB" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="15" font-weight="700">🔍 Side-by-Side Visual &amp; Media Inspector</text>
+  
+  <!-- Zoom Controls -->
+  <rect x="580" y="12" width="220" height="28" rx="6" fill="#1F2937"/>
+  <text x="610" y="30" fill="#9CA3AF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="13" font-weight="600">🔍 -</text>
+  <text x="690" y="30" fill="#38BDF8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="12" font-weight="600" text-anchor="middle">Zoom: 200%</text>
+  <text x="760" y="30" fill="#9CA3AF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="13" font-weight="600">🔍 +</text>
+
+  <!-- Close Button -->
+  <circle cx="864" cy="26" r="14" fill="#374151"/>
+  <text x="864" y="31" fill="#F9FAFB" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="13" font-weight="700" text-anchor="middle">✕</text>
+
+  <!-- Left Comparison Box (Original) -->
+  <rect x="24" y="68" width="418" height="380" rx="10" fill="#111827" stroke="#059669" stroke-width="2"/>
+  <rect x="26" y="70" width="414" height="36" rx="8" fill="#064E3B" fill-opacity="0.3"/>
+  <text x="40" y="93" fill="#34D399" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="12" font-weight="600">✅ PRIMARY FILE [KEEP]</text>
+  
+  <!-- Image Canvas Left -->
+  <rect x="44" y="120" width="378" height="260" rx="8" fill="#1F2937"/>
+  <circle cx="233" cy="220" r="45" fill="#3B82F6" fill-opacity="0.3"/>
+  <path d="M120 330 L190 240 L250 300 L320 210 L390 330 Z" fill="#38BDF8" fill-opacity="0.4"/>
+  <text x="233" y="360" fill="#E5E7EB" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="12" text-anchor="middle">Resolution: 3840 × 2160 • 4.2 MB</text>
+  <text x="40" y="420" fill="#9CA3AF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="11">Path: /Volumes/Storage/Photos/Raw/IMG_4821.jpg</text>
+
+  <!-- Right Comparison Box (Duplicate) -->
+  <rect x="458" y="68" width="418" height="380" rx="10" fill="#111827" stroke="#DC2626" stroke-width="2"/>
+  <rect x="460" y="70" width="414" height="36" rx="8" fill="#7F1D1D" fill-opacity="0.3"/>
+  <text x="474" y="93" fill="#F87171" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="12" font-weight="600">🗑️ DUPLICATE COPY [TRASH]</text>
+
+  <!-- Image Canvas Right -->
+  <rect x="478" y="120" width="378" height="260" rx="8" fill="#1F2937"/>
+  <circle cx="667" cy="220" r="45" fill="#3B82F6" fill-opacity="0.3"/>
+  <path d="M554 330 L624 240 L684 300 L754 210 L824 330 Z" fill="#38BDF8" fill-opacity="0.4"/>
+  <text x="667" y="360" fill="#E5E7EB" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="12" text-anchor="middle">Resolution: 3840 × 2160 • 4.2 MB (100% Bit-Identical)</text>
+  <text x="474" y="420" fill="#9CA3AF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="11">Path: /Users/mahesh/Downloads/IMG_4821_copy.jpg</text>
+
+  <!-- Footer Actions -->
+  <rect x="24" y="464" width="852" height="42" rx="8" fill="#111827"/>
+  <text x="40" y="490" fill="#9CA3AF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="12">💡 Synchronized panning and zoom locks inspection position across both viewports.</text>
+</svg>

@@ -31,3 +31,8 @@ src-tauri/gen/schemas
 *.njsproj
 *.sln
 *.sw?
+
+# Standalone repositories & external files
+audio-insight-whisper/
+GITHUB_PROFILE_README.md
+DupliSoft
