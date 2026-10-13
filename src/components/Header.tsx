@@ -29,9 +29,11 @@ export const Header: React.FC<HeaderProps> = ({
     <header className="h-16 px-6 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between select-none">
       {/* Brand & Privacy Badge */}
       <div className="flex items-center space-x-3">
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/20 text-white font-bold text-lg">
-          D
-        </div>
+        <img
+          src="/DupliSoft_Logo.png"
+          alt="DupliSoft Logo"
+          className="w-9 h-9 rounded-xl object-contain shadow-md shadow-indigo-500/20 bg-slate-800/80 p-0.5 border border-slate-700/60"
+        />
         <div>
           <div className="flex items-center space-x-2">
             <h1 className="font-bold text-base tracking-tight text-white">DupliSoft</h1>

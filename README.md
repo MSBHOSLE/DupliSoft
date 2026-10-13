@@ -1,7 +1,20 @@
-# DupliSoft 🚀
+<p align="center">
+  <img src="DupliSoft_Logo.png" alt="DupliSoft Logo" width="150" style="border-radius: 28px;" />
+</p>
 
-> **High-Performance, 100% Offline & Private Duplicate File Finder with Side-by-Side Media Inspector**  
-> Built for **macOS** and **Windows** using **Rust** and **Tauri v2**.
+<h1 align="center">DupliSoft</h1>
+
+<p align="center">
+  <strong>High-Performance, 100% Offline & Private Duplicate File Finder & Previewer</strong><br>
+  <em>Developer: Mahesh Sanjayrao Bhosle</em>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Platform-macOS%20%7C%20Windows-blue?style=flat-square" alt="Platform" />
+  <img src="https://img.shields.io/badge/Privacy-100%25%20Offline-emerald?style=flat-square" alt="Privacy" />
+  <img src="https://img.shields.io/badge/Engine-Rust%20%2B%20BLAKE3-orange?style=flat-square" alt="Engine" />
+  <img src="https://img.shields.io/badge/Version-MB.02-indigo?style=flat-square" alt="Version" />
+</p>
 
 ---
 
