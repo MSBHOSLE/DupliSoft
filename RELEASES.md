@@ -20,3 +20,4 @@ The script will:
 3. Archive the DMG file into `releases/DupliSoft (MB.XX).dmg`.
 4. Keep all past versions permanently intact.
 | `MB.01` | **DupliSoft (MB.01)** | 2026-10-13 20:48:46 | 2.3M | `566412413583318d513955b82e6044a69da95a52ae0dd5cefb07a2d7a7b2e8ac` |
+| `MB.02` | **DupliSoft (MB.02)** | 2026-10-13 22:49:58 | 2.5M | `9e9363a1026ba7ede24eab4968d36f2b7cfbb5e44b5871bd8d951d21d5743a7d` |
