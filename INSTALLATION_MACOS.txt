@@ -1,0 +1,72 @@
+================================================================================
+          DupliSoft — macOS Installation & Security Guide
+================================================================================
+
+App Name: DupliSoft
+Developer: Mahesh Sanjayrao Bhosle
+Compatibility: macOS 12 (Monterey), macOS 13 (Ventura), macOS 14 (Sonoma), 
+               macOS 15 (Sequoia), macOS 16+ (Apple Silicon M1/M2/M3/M4 & Intel)
+
+--------------------------------------------------------------------------------
+1. HOW TO INSTALL
+--------------------------------------------------------------------------------
+Step 1: Double-click the installer file (e.g., "DupliSoft (MB.01).dmg").
+Step 2: A window will open showing the "DupliSoft" icon and the "Applications" folder.
+Step 3: Drag and drop the "DupliSoft" icon into the "Applications" folder.
+Step 4: Once copied, eject the disk image from Finder.
+
+--------------------------------------------------------------------------------
+2. FIXING SECURITY WARNINGS ("Not Trusted" / "Cannot be opened")
+--------------------------------------------------------------------------------
+Because this application is built independently without a paid $99/year Apple
+developer subscription, macOS Gatekeeper protects your Mac by default by showing:
+"DupliSoft cannot be opened because Apple cannot check it for malicious software"
+or "Unidentified Developer".
+
+Choose the method below for your macOS version:
+
+--------------------------------------------------------------------------------
+METHOD A: For macOS Sequoia (macOS 15) — Recommended
+--------------------------------------------------------------------------------
+In macOS Sequoia, Apple removed the old right-click shortcut. Follow these steps:
+
+1. In Finder, open the "Applications" folder and double-click "DupliSoft".
+2. A security popup will appear saying Apple cannot check the app. Click "Done" (or "OK").
+3. Open "System Settings" on your Mac (click Apple logo in top left -> System Settings).
+4. In the left sidebar, click "Privacy & Security".
+5. Scroll down to the "Security" section near the bottom.
+6. You will see this message:
+   '"DupliSoft" was blocked from use because it is not from an identified developer.'
+7. Click the button that says "Open Anyway".
+8. Enter your Mac login password or use Touch ID.
+9. A final confirmation dialog will ask if you are sure: Click "Open Anyway" (or "Open").
+
+* DONE! macOS will now remember this and open DupliSoft with a double-click every time.
+
+--------------------------------------------------------------------------------
+METHOD B: For macOS Sonoma, Ventura, Monterey (macOS 12, 13, 14)
+--------------------------------------------------------------------------------
+1. In Finder, open the "Applications" folder.
+2. RIGHT-CLICK (or hold the CONTROL key and click) on "DupliSoft".
+3. Click "Open" from the context menu.
+4. In the popup window, notice that an "Open" button is now visible.
+5. Click "Open".
+
+--------------------------------------------------------------------------------
+METHOD C: If macOS says "App is damaged and can't be opened" (100% Terminal Fix)
+--------------------------------------------------------------------------------
+If you downloaded or transferred the file via AirDrop, WhatsApp, or Telegram,
+macOS automatically attaches a quarantine lock. You can remove it in 5 seconds:
+
+1. Open Terminal on your Mac (press Command + Space, type "Terminal", press Enter).
+2. Copy and paste this command, then press Enter:
+
+   sudo xattr -rd com.apple.quarantine /Applications/DupliSoft.app
+
+3. Type your Mac login password (characters will remain invisible as you type for security).
+4. Press Enter.
+5. Double-click DupliSoft in Applications — it will launch immediately with zero warnings!
+
+================================================================================
+DupliSoft is 100% private, runs offline, and never sends data to any cloud.
+================================================================================

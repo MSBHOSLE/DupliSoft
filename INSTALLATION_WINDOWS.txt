@@ -1,0 +1,60 @@
+================================================================================
+          DupliSoft — Windows Installation & SmartScreen Trust Guide
+================================================================================
+
+App Name: DupliSoft
+Developer: Mahesh Sanjayrao Bhosle
+Compatibility: Windows 10 (64-bit), Windows 11 (64-bit), and modern Windows PCs
+
+--------------------------------------------------------------------------------
+1. HOW TO INSTALL & RUN
+--------------------------------------------------------------------------------
+Step 1: Download or copy the installer file:
+        "DupliSoft_0.1.0_x64-setup.exe" (or .msi installer)
+Step 2: Double-click the file to launch the setup wizard.
+Step 3: Follow the on-screen prompts to choose your installation directory.
+Step 4: Once finished, launch DupliSoft from your Start Menu or Desktop shortcut.
+
+--------------------------------------------------------------------------------
+2. FIXING "WINDOWS PROTECTED YOUR PC" (Microsoft Defender SmartScreen)
+--------------------------------------------------------------------------------
+When running new independent software that does not have an expensive $400/year
+commercial Microsoft enterprise certificate, Windows Defender SmartScreen shows a
+blue safety window saying:
+
+"Windows protected your PC
+ Microsoft Defender SmartScreen prevented an unrecognized app from starting.
+ Running this app might put your PC at risk."
+
+HOW TO TRUST & RUN (Takes 2 Seconds):
+
+1. On the blue SmartScreen window, look at the text below the main heading.
+2. Click the underlined link that says:
+   >>> "More info" <<<
+3. Once you click "More info", you will see:
+   - App: DupliSoft.exe
+   - Publisher: Unknown publisher
+4. A new button will appear at the bottom right corner called:
+   >>> "Run anyway" <<<
+5. Click "Run anyway".
+
+* DONE! The installer will launch and will not ask you again.
+
+--------------------------------------------------------------------------------
+3. USER ACCOUNT CONTROL (UAC) PROMPT
+--------------------------------------------------------------------------------
+If Windows asks:
+"Do you want to allow this app from an unknown publisher to make changes to your device?"
+- Click "Yes" to proceed with the installation.
+
+--------------------------------------------------------------------------------
+4. SYSTEM REQUIREMENTS
+--------------------------------------------------------------------------------
+- Windows 10 (version 1809+) or Windows 11.
+- Microsoft Edge WebView2 Runtime: Pre-installed by Microsoft on all Windows 10 
+  and Windows 11 computers out of the box.
+- RAM: Minimum 2 GB (DupliSoft uses only ~35 MB of RAM).
+
+================================================================================
+DupliSoft is 100% private, runs offline, and never sends data to any cloud.
+================================================================================
