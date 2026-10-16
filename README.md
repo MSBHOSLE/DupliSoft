@@ -27,9 +27,8 @@ Download native, pre-compiled standalone installers directly from GitHub Release
 | Platform | Installer Type | Direct Download Link | Size | SHA-256 Checksum |
 | :--- | :--- | :--- | :--- | :--- |
 | **macOS (Universal / Apple Silicon & Intel)** | Native `.dmg` **(Latest)** | [**Download DupliSoft (MB.05).dmg**](https://github.com/MSBHOSLE/DupliSoft/releases/download/vMB.05/DupliSoft.MB.05.dmg) | 3.6 MB | `cfff3036f5c34ca5a397eae5fbd2b401d1e77b08cd4b3200681007d5f7196f90` |
-| **macOS (Universal / Apple Silicon & Intel)** | Native `.dmg` | [**Download DupliSoft (MB.02).dmg**](https://github.com/MSBHOSLE/DupliSoft/releases/download/vMB.02/DupliSoft.MB.02.dmg) | 2.53 MB | `9e9363a1026ba7ede24eab4968d36f2b7cfbb5e44b5871bd8d951d21d5743a7d` |
-| **Windows (x64)** | Setup Installer `.exe` | [**Download DupliSoft_0.1.0_x64-setup.exe**](https://github.com/MSBHOSLE/DupliSoft/releases/download/v0.1.0/DupliSoft_0.1.0_x64-setup.exe) | 1.79 MB | `72a657bad63b0b64cb97f624558f6d90a9b8eb2c1e7807d9f94a457ee453c054` |
-| **Windows (x64)** | Enterprise `.msi` | [**Download DupliSoft_0.1.0_x64_en-US.msi**](https://github.com/MSBHOSLE/DupliSoft/releases/download/v0.1.0/DupliSoft_0.1.0_x64_en-US.msi) | 2.55 MB | `4f4238e708bc16ceb17be45fd2f00889c20a674e2dbece166928e42713f0ce59` |
+| **Windows (x64)** | Setup Installer `.exe` **(Latest)** | [**Download DupliSoft_0.5.0_x64-setup.exe**](https://github.com/MSBHOSLE/DupliSoft/releases/download/vMB.05/DupliSoft_0.5.0_x64-setup.exe) | 2.25 MB | `6a25390b6684ad88d89ad898acf89c9ae4ee32972f7ba1fad60d8d37650e2793` |
+| **Windows (x64)** | Enterprise `.msi` **(Latest)** | [**Download DupliSoft_0.5.0_x64_en-US.msi**](https://github.com/MSBHOSLE/DupliSoft/releases/download/vMB.05/DupliSoft_0.5.0_x64_en-US.msi) | 3.2 MB | `1f1bcdeb14e796309617896cd37d77fcbc11fd5667113444b4f1a2fa7c4b7194` |
 
 👉 *For all release artifacts and detailed changelogs, explore the [Full Releases Registry](https://github.com/MSBHOSLE/DupliSoft/releases) or [RELEASES.md](RELEASES.md).*
 
