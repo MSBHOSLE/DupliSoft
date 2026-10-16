@@ -23,8 +23,12 @@ for file in "${RELEASES_DIR}"/DupliSoft\ \(MB.[0-9][0-9]\).dmg; do
   fi
 done
 
-NEXT_NUM=$((LATEST_NUM + 1))
-NEXT_VERSION=$(printf "MB.%02d" $NEXT_NUM)
+if [ -n "$1" ]; then
+  NEXT_VERSION="$1"
+else
+  NEXT_NUM=$((LATEST_NUM + 1))
+  NEXT_VERSION=$(printf "MB.%02d" $NEXT_NUM)
+fi
 RELEASE_NAME="DupliSoft (${NEXT_VERSION})"
 DMG_FILENAME="${RELEASE_NAME}.dmg"
 
@@ -65,6 +69,16 @@ TARGET_DMG="${RELEASES_DIR}/${DMG_FILENAME}"
 cp "$SOURCE_DMG" "$TARGET_DMG"
 cp "$TARGET_DMG" "${ROOT_DIR}/${DMG_FILENAME}"
 
+# Apply custom logo icon directly onto the DMG file for Finder & Desktop
+osascript -l JavaScript -e "
+  ObjC.import('AppKit');
+  var img = $.NSImage.alloc.initWithContentsOfFile('${ROOT_DIR}/src-tauri/icons/icon.icns');
+  if (img) {
+    $.NSWorkspace.sharedWorkspace.setIconForFileOptions(img, '${TARGET_DMG}', 0);
+    $.NSWorkspace.sharedWorkspace.setIconForFileOptions(img, '${ROOT_DIR}/${DMG_FILENAME}', 0);
+  }
+" || true
+
 FILE_SIZE=$(ls -lh "$TARGET_DMG" | awk '{print $5}')
 SHA256=$(shasum -a 256 "$TARGET_DMG" | awk '{print $1}')
 DATE_STR=$(date "+%Y-%m-%d %H:%M:%S")
@@ -82,7 +96,12 @@ All versions follow the standard format: \`DupliSoft (MB.XX)\` with \`MB.\` cons
 EOL
 fi
 
-echo "| \`${NEXT_VERSION}\` | **${RELEASE_NAME}** | ${DATE_STR} | ${FILE_SIZE} | \`${SHA256}\` |" >> "$RELEASES_MD"
+NEW_ENTRY="| \`${NEXT_VERSION}\` | **${RELEASE_NAME}** | ${DATE_STR} | ${FILE_SIZE} | \`${SHA256}\` |"
+if grep -q "| \`${NEXT_VERSION}\` |" "$RELEASES_MD"; then
+  sed -i '' "s/| \`${NEXT_VERSION}\` |.*/$NEW_ENTRY/" "$RELEASES_MD" || true
+else
+  echo "$NEW_ENTRY" >> "$RELEASES_MD"
+fi
 
 echo ""
 echo "✅ Release completed successfully!"

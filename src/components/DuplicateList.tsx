@@ -21,6 +21,7 @@ import {
   Music,
   Archive,
   File,
+  Code2,
   Eye,
   ExternalLink,
   FolderOpen,
@@ -51,6 +52,7 @@ export const DuplicateList: React.FC<DuplicateListProps> = ({
     { key: "images", label: "Images", icon: <Image className="w-3.5 h-3.5" /> },
     { key: "videos", label: "Videos", icon: <Film className="w-3.5 h-3.5" /> },
     { key: "documents", label: "PDFs & Docs", icon: <FileText className="w-3.5 h-3.5" /> },
+    { key: "code", label: "Code & Notebooks", icon: <Code2 className="w-3.5 h-3.5" /> },
     { key: "audio", label: "Audio", icon: <Music className="w-3.5 h-3.5" /> },
     { key: "archives", label: "Archives", icon: <Archive className="w-3.5 h-3.5" /> },
   ];

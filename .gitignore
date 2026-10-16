@@ -18,8 +18,10 @@ target
 src-tauri/target
 src-tauri/gen/schemas
 
-# Release binaries (large DMG files - built by release scripts / CI)
+# Release binaries (large installer files - built by release scripts / CI)
 *.dmg
+*.exe
+*.msi
 
 # OS and Editor files
 .DS_Store

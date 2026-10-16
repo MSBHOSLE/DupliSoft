@@ -1,7 +1,38 @@
 import React, { useState, useRef, useEffect } from "react";
 import { convertFileSrc, invoke } from "@tauri-apps/api/core";
-import { DuplicateGroup, FileEntry, ImageQuality, SimilarPhotoMatch } from "../types";
-import { formatBytes, formatDate, isImage, isVideo, isPdf, isAudio } from "../utils/formatters";
+import {
+  ArchivePreview,
+  DocxPreview,
+  DuplicateGroup,
+  FileEntry,
+  ImageQuality,
+  NotebookPreview,
+  PptxPreview,
+  SimilarPhotoMatch,
+  SpreadsheetPreview,
+  TextPreview,
+} from "../types";
+import {
+  formatBytes,
+  formatDate,
+  isArchive,
+  isAudio,
+  isCode,
+  isImage,
+  isNotebook,
+  isPdf,
+  isPpt,
+  isSpreadsheet,
+  isTextDoc,
+  isVideo,
+  isWord,
+} from "../utils/formatters";
+import { SpreadsheetViewer } from "./SpreadsheetViewer";
+import { TextViewer } from "./TextViewer";
+import { DocxViewer } from "./DocxViewer";
+import { PptxViewer } from "./PptxViewer";
+import { ArchiveViewer } from "./ArchiveViewer";
+import { NotebookViewer } from "./NotebookViewer";
 import {
   X,
   ZoomIn,
@@ -15,6 +46,12 @@ import {
   CheckCircle,
   Sparkles,
   Camera,
+  FileSpreadsheet,
+  FileText,
+  BookOpen,
+  Presentation,
+  Archive,
+  Code2,
 } from "lucide-react";
 
 interface PreviewModalProps {
@@ -50,11 +87,43 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({
   const fileA = group.files[fileAIndex] || group.files[0];
   const fileB = group.files[fileBIndex] || group.files[0];
 
-  const ext = fileA.extension.toLowerCase();
-  const isImg = isImage(ext);
-  const isVid = isVideo(ext);
-  const isDocPdf = isPdf(ext);
-  const isAud = isAudio(ext);
+  const extA = fileA.extension.toLowerCase();
+  const extB = fileB.extension.toLowerCase();
+
+  const isImgA = isImage(extA);
+  const isImgB = isImage(extB);
+  const isVidA = isVideo(extA);
+  const isVidB = isVideo(extB);
+  const isDocPdfA = isPdf(extA);
+  const isDocPdfB = isPdf(extB);
+  const isAudA = isAudio(extA);
+  const isAudB = isAudio(extB);
+  const isSheetA = isSpreadsheet(extA);
+  const isSheetB = isSpreadsheet(extB);
+  const isWordDocA = isWord(extA);
+  const isWordDocB = isWord(extB);
+  const isPptDocA = isPpt(extA);
+  const isPptDocB = isPpt(extB);
+  const isNotebookA = isNotebook(extA);
+  const isNotebookB = isNotebook(extB);
+  const isCodeA = isCode(extA);
+  const isCodeB = isCode(extB);
+  const isTextA = isTextDoc(extA) && !isNotebookA;
+  const isTextB = isTextDoc(extB) && !isNotebookB;
+  const isZipArchiveA = isArchive(extA);
+  const isZipArchiveB = isArchive(extB);
+
+  // Common flags for header controls
+  const isImg = isImgA || isImgB;
+  const isVid = isVidA || isVidB;
+  const isDocPdf = isDocPdfA || isDocPdfB;
+  const isSheet = isSheetA || isSheetB;
+  const isWordDoc = isWordDocA || isWordDocB;
+  const isPptDoc = isPptDocA || isPptDocB;
+  const isNotebookDoc = isNotebookA || isNotebookB;
+  const isCodeDoc = isCodeA || isCodeB;
+  const isText = isTextA || isTextB;
+  const isZipArchive = isZipArchiveA || isZipArchiveB;
 
   const urlA = convertFileSrc(fileA.path);
   const urlB = convertFileSrc(fileB.path);
@@ -63,6 +132,203 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({
   const [qualityA, setQualityA] = useState<ImageQuality | null>(null);
   const [qualityB, setQualityB] = useState<ImageQuality | null>(null);
   const [dhashMatch, setDhashMatch] = useState<SimilarPhotoMatch | null>(null);
+
+  // Pure Rust In-App Spreadsheet Engine (xlsx, xls, ods, csv, tsv)
+  const [sheetA, setSheetA] = useState<SpreadsheetPreview | null>(null);
+  const [sheetB, setSheetB] = useState<SpreadsheetPreview | null>(null);
+  const [loadingSheetA, setLoadingSheetA] = useState<boolean>(false);
+  const [loadingSheetB, setLoadingSheetB] = useState<boolean>(false);
+  const [sheetErrorA, setSheetErrorA] = useState<string | null>(null);
+  const [sheetErrorB, setSheetErrorB] = useState<string | null>(null);
+
+  // Text & Notes Preview (txt, md, rtf, log, json, xml, html, etc.)
+  const [textA, setTextA] = useState<TextPreview | null>(null);
+  const [textB, setTextB] = useState<TextPreview | null>(null);
+  const [loadingTextA, setLoadingTextA] = useState<boolean>(false);
+  const [loadingTextB, setLoadingTextB] = useState<boolean>(false);
+  const [textErrorA, setTextErrorA] = useState<string | null>(null);
+  const [textErrorB, setTextErrorB] = useState<string | null>(null);
+
+  // Word Document Preview (.docx, .doc)
+  const [docxA, setDocxA] = useState<DocxPreview | null>(null);
+  const [docxB, setDocxB] = useState<DocxPreview | null>(null);
+  const [loadingDocxA, setLoadingDocxA] = useState<boolean>(false);
+  const [loadingDocxB, setLoadingDocxB] = useState<boolean>(false);
+  const [docxErrorA, setDocxErrorA] = useState<string | null>(null);
+  const [docxErrorB, setDocxErrorB] = useState<string | null>(null);
+
+  // PowerPoint Presentation Preview (.pptx, .ppt)
+  const [pptxA, setPptxA] = useState<PptxPreview | null>(null);
+  const [pptxB, setPptxB] = useState<PptxPreview | null>(null);
+  const [loadingPptxA, setLoadingPptxA] = useState<boolean>(false);
+  const [loadingPptxB, setLoadingPptxB] = useState<boolean>(false);
+  const [pptxErrorA, setPptxErrorA] = useState<string | null>(null);
+  const [pptxErrorB, setPptxErrorB] = useState<string | null>(null);
+
+  // Archive Preview (.zip, .tar, .gz)
+  const [archiveA, setArchiveA] = useState<ArchivePreview | null>(null);
+  const [archiveB, setArchiveB] = useState<ArchivePreview | null>(null);
+  const [loadingArchiveA, setLoadingArchiveA] = useState<boolean>(false);
+  const [loadingArchiveB, setLoadingArchiveB] = useState<boolean>(false);
+  const [archiveErrorA, setArchiveErrorA] = useState<string | null>(null);
+  const [archiveErrorB, setArchiveErrorB] = useState<string | null>(null);
+
+  // Jupyter Notebook Preview (.ipynb)
+  const [notebookA, setNotebookA] = useState<NotebookPreview | null>(null);
+  const [notebookB, setNotebookB] = useState<NotebookPreview | null>(null);
+  const [loadingNotebookA, setLoadingNotebookA] = useState<boolean>(false);
+  const [loadingNotebookB, setLoadingNotebookB] = useState<boolean>(false);
+  const [notebookErrorA, setNotebookErrorA] = useState<string | null>(null);
+  const [notebookErrorB, setNotebookErrorB] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (isSheetA && fileA) {
+      setLoadingSheetA(true);
+      setSheetErrorA(null);
+      invoke<SpreadsheetPreview>("read_spreadsheet_preview", { path: fileA.path, maxRows: 50 })
+        .then((res) => {
+          setSheetA(res);
+          setLoadingSheetA(false);
+        })
+        .catch((err) => {
+          setSheetErrorA(String(err));
+          setLoadingSheetA(false);
+        });
+    } else {
+      setSheetA(null);
+    }
+
+    if (isSheetB && fileB) {
+      setLoadingSheetB(true);
+      setSheetErrorB(null);
+      invoke<SpreadsheetPreview>("read_spreadsheet_preview", { path: fileB.path, maxRows: 50 })
+        .then((res) => {
+          setSheetB(res);
+          setLoadingSheetB(false);
+        })
+        .catch((err) => {
+          setSheetErrorB(String(err));
+          setLoadingSheetB(false);
+        });
+    } else {
+      setSheetB(null);
+    }
+  }, [fileAIndex, fileBIndex, isSheetA, isSheetB, fileA.path, fileB.path]);
+
+  // Text preview effect
+  useEffect(() => {
+    if (isTextA && fileA) {
+      setLoadingTextA(true);
+      setTextErrorA(null);
+      invoke<TextPreview>("read_text_preview", { path: fileA.path, maxLines: 500 })
+        .then((res) => { setTextA(res); setLoadingTextA(false); })
+        .catch((err) => { setTextErrorA(String(err)); setLoadingTextA(false); });
+    } else {
+      setTextA(null);
+    }
+
+    if (isTextB && fileB) {
+      setLoadingTextB(true);
+      setTextErrorB(null);
+      invoke<TextPreview>("read_text_preview", { path: fileB.path, maxLines: 500 })
+        .then((res) => { setTextB(res); setLoadingTextB(false); })
+        .catch((err) => { setTextErrorB(String(err)); setLoadingTextB(false); });
+    } else {
+      setTextB(null);
+    }
+  }, [fileAIndex, fileBIndex, isTextA, isTextB, fileA.path, fileB.path]);
+
+  // Docx preview effect
+  useEffect(() => {
+    if (isWordDocA && fileA) {
+      setLoadingDocxA(true);
+      setDocxErrorA(null);
+      invoke<DocxPreview>("read_docx_preview", { path: fileA.path, maxParagraphs: 100 })
+        .then((res) => { setDocxA(res); setLoadingDocxA(false); })
+        .catch((err) => { setDocxErrorA(String(err)); setLoadingDocxA(false); });
+    } else {
+      setDocxA(null);
+    }
+
+    if (isWordDocB && fileB) {
+      setLoadingDocxB(true);
+      setDocxErrorB(null);
+      invoke<DocxPreview>("read_docx_preview", { path: fileB.path, maxParagraphs: 100 })
+        .then((res) => { setDocxB(res); setLoadingDocxB(false); })
+        .catch((err) => { setDocxErrorB(String(err)); setLoadingDocxB(false); });
+    } else {
+      setDocxB(null);
+    }
+  }, [fileAIndex, fileBIndex, isWordDocA, isWordDocB, fileA.path, fileB.path]);
+
+  // Pptx preview effect
+  useEffect(() => {
+    if (isPptDocA && fileA) {
+      setLoadingPptxA(true);
+      setPptxErrorA(null);
+      invoke<PptxPreview>("read_pptx_preview", { path: fileA.path })
+        .then((res) => { setPptxA(res); setLoadingPptxA(false); })
+        .catch((err) => { setPptxErrorA(String(err)); setLoadingPptxA(false); });
+    } else {
+      setPptxA(null);
+    }
+
+    if (isPptDocB && fileB) {
+      setLoadingPptxB(true);
+      setPptxErrorB(null);
+      invoke<PptxPreview>("read_pptx_preview", { path: fileB.path })
+        .then((res) => { setPptxB(res); setLoadingPptxB(false); })
+        .catch((err) => { setPptxErrorB(String(err)); setLoadingPptxB(false); });
+    } else {
+      setPptxB(null);
+    }
+  }, [fileAIndex, fileBIndex, isPptDocA, isPptDocB, fileA.path, fileB.path]);
+
+  // Archive preview effect
+  useEffect(() => {
+    if (isZipArchiveA && fileA) {
+      setLoadingArchiveA(true);
+      setArchiveErrorA(null);
+      invoke<ArchivePreview>("read_archive_preview", { path: fileA.path, maxEntries: 200 })
+        .then((res) => { setArchiveA(res); setLoadingArchiveA(false); })
+        .catch((err) => { setArchiveErrorA(String(err)); setLoadingArchiveA(false); });
+    } else {
+      setArchiveA(null);
+    }
+
+    if (isZipArchiveB && fileB) {
+      setLoadingArchiveB(true);
+      setArchiveErrorB(null);
+      invoke<ArchivePreview>("read_archive_preview", { path: fileB.path, maxEntries: 200 })
+        .then((res) => { setArchiveB(res); setLoadingArchiveB(false); })
+        .catch((err) => { setArchiveErrorB(String(err)); setLoadingArchiveB(false); });
+    } else {
+      setArchiveB(null);
+    }
+  }, [fileAIndex, fileBIndex, isZipArchiveA, isZipArchiveB, fileA.path, fileB.path]);
+
+  // Notebook preview effect (.ipynb)
+  useEffect(() => {
+    if (isNotebookA && fileA) {
+      setLoadingNotebookA(true);
+      setNotebookErrorA(null);
+      invoke<NotebookPreview>("read_notebook_preview", { path: fileA.path, maxCells: 100 })
+        .then((res) => { setNotebookA(res); setLoadingNotebookA(false); })
+        .catch((err) => { setNotebookErrorA(String(err)); setLoadingNotebookA(false); });
+    } else {
+      setNotebookA(null);
+    }
+
+    if (isNotebookB && fileB) {
+      setLoadingNotebookB(true);
+      setNotebookErrorB(null);
+      invoke<NotebookPreview>("read_notebook_preview", { path: fileB.path, maxCells: 100 })
+        .then((res) => { setNotebookB(res); setLoadingNotebookB(false); })
+        .catch((err) => { setNotebookErrorB(String(err)); setLoadingNotebookB(false); });
+    } else {
+      setNotebookB(null);
+    }
+  }, [fileAIndex, fileBIndex, isNotebookA, isNotebookB, fileA.path, fileB.path]);
 
   useEffect(() => {
     if (isImg && fileA) {
@@ -220,6 +486,50 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({
               </button>
             )}
 
+            {/* Engine Badges */}
+            {isSheet && (
+              <div className="flex items-center space-x-1.5 px-2.5 py-1 bg-emerald-500/15 border border-emerald-500/30 rounded-lg text-emerald-300 text-xs font-medium">
+                <FileSpreadsheet className="w-3.5 h-3.5" />
+                <span>Spreadsheet Table Engine</span>
+              </div>
+            )}
+            {isWordDoc && (
+              <div className="flex items-center space-x-1.5 px-2.5 py-1 bg-blue-500/15 border border-blue-500/30 rounded-lg text-blue-300 text-xs font-medium">
+                <BookOpen className="w-3.5 h-3.5" />
+                <span>Word Document Engine</span>
+              </div>
+            )}
+            {isPptDoc && (
+              <div className="flex items-center space-x-1.5 px-2.5 py-1 bg-orange-500/15 border border-orange-500/30 rounded-lg text-orange-300 text-xs font-medium">
+                <Presentation className="w-3.5 h-3.5" />
+                <span>Presentation Engine</span>
+              </div>
+            )}
+            {isText && !isCodeDoc && (
+              <div className="flex items-center space-x-1.5 px-2.5 py-1 bg-cyan-500/15 border border-cyan-500/30 rounded-lg text-cyan-300 text-xs font-medium">
+                <FileText className="w-3.5 h-3.5" />
+                <span>Text & Notes Engine</span>
+              </div>
+            )}
+            {isCodeDoc && !isNotebookDoc && (
+              <div className="flex items-center space-x-1.5 px-2.5 py-1 bg-indigo-500/15 border border-indigo-500/30 rounded-lg text-indigo-300 text-xs font-medium">
+                <Code2 className="w-3.5 h-3.5" />
+                <span>Developer Code Engine</span>
+              </div>
+            )}
+            {isNotebookDoc && (
+              <div className="flex items-center space-x-1.5 px-2.5 py-1 bg-amber-500/15 border border-amber-500/30 rounded-lg text-amber-300 text-xs font-medium">
+                <BookOpen className="w-3.5 h-3.5" />
+                <span>Jupyter Notebook Engine</span>
+              </div>
+            )}
+            {isZipArchive && (
+              <div className="flex items-center space-x-1.5 px-2.5 py-1 bg-purple-500/15 border border-purple-500/30 rounded-lg text-purple-300 text-xs font-medium">
+                <Archive className="w-3.5 h-3.5" />
+                <span>Archive Tree Engine</span>
+              </div>
+            )}
+
             <button
               onClick={onClose}
               className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition"
@@ -289,7 +599,7 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({
 
             {/* File A Viewer Stage */}
             <div className="flex-1 bg-slate-950/90 relative overflow-auto flex items-center justify-center p-4">
-              {isImg && (
+              {isImgA && (
                 <div
                   className="transition-transform duration-100 ease-out flex items-center justify-center"
                   style={{ transform: `scale(${zoomA / 100})`, transformOrigin: "center center" }}
@@ -303,7 +613,7 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({
                 </div>
               )}
 
-              {isDocPdf && (
+              {isDocPdfA && (
                 <iframe
                   src={urlA}
                   title={fileA.filename}
@@ -311,7 +621,7 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({
                 />
               )}
 
-              {isVid && (
+              {isVidA && (
                 <video
                   ref={videoRefA}
                   src={urlA}
@@ -320,7 +630,7 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({
                 />
               )}
 
-              {isAud && (
+              {isAudA && (
                 <div className="w-full max-w-md p-6 bg-slate-850 rounded-xl border border-slate-700/60 flex flex-col items-center">
                   <div className="w-16 h-16 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-400 mb-4">
                     <Play className="w-8 h-8" />
@@ -330,14 +640,89 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({
                 </div>
               )}
 
-              {!isImg && !isDocPdf && !isVid && !isAud && (
-                <div className="text-center p-8 text-slate-400">
-                  <p className="text-sm">Preview not directly supported for .{fileA.extension} files.</p>
-                  <p className="text-xs text-slate-500 mt-1">
-                    Both files share the exact same 256-bit BLAKE3 hash and byte length.
-                  </p>
+              {isSheetA && (
+                <div className="w-full h-full min-h-[360px] flex flex-col">
+                  <SpreadsheetViewer
+                    data={sheetA}
+                    loading={loadingSheetA}
+                    error={sheetErrorA}
+                    filename={fileA.filename}
+                  />
                 </div>
               )}
+
+              {isTextA && (
+                <div className="w-full h-full min-h-[360px] flex flex-col">
+                  <TextViewer
+                    data={textA}
+                    loading={loadingTextA}
+                    error={textErrorA}
+                    filename={fileA.filename}
+                  />
+                </div>
+              )}
+
+              {isWordDocA && (
+                <div className="w-full h-full min-h-[360px] flex flex-col">
+                  <DocxViewer
+                    data={docxA}
+                    loading={loadingDocxA}
+                    error={docxErrorA}
+                    filename={fileA.filename}
+                  />
+                </div>
+              )}
+
+              {isPptDocA && (
+                <div className="w-full h-full min-h-[360px] flex flex-col">
+                  <PptxViewer
+                    data={pptxA}
+                    loading={loadingPptxA}
+                    error={pptxErrorA}
+                    filename={fileA.filename}
+                  />
+                </div>
+              )}
+
+              {isZipArchiveA && (
+                <div className="w-full h-full min-h-[360px] flex flex-col">
+                  <ArchiveViewer
+                    data={archiveA}
+                    loading={loadingArchiveA}
+                    error={archiveErrorA}
+                    filename={fileA.filename}
+                  />
+                </div>
+              )}
+
+              {isNotebookA && (
+                <div className="w-full h-full min-h-[360px] flex flex-col">
+                  <NotebookViewer
+                    data={notebookA}
+                    loading={loadingNotebookA}
+                    error={notebookErrorA}
+                    filename={fileA.filename}
+                  />
+                </div>
+              )}
+
+              {!isImgA &&
+                !isDocPdfA &&
+                !isVidA &&
+                !isAudA &&
+                !isSheetA &&
+                !isTextA &&
+                !isWordDocA &&
+                !isPptDocA &&
+                !isZipArchiveA &&
+                !isNotebookA && (
+                  <div className="text-center p-8 text-slate-400">
+                    <p className="text-sm">Preview not directly supported for .{fileA.extension} files.</p>
+                    <p className="text-xs text-slate-500 mt-1">
+                      Both files share the exact same 256-bit BLAKE3 hash and byte length.
+                    </p>
+                  </div>
+                )}
             </div>
 
             {/* File A Metadata Footer */}
@@ -422,7 +807,7 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({
 
               {/* File B Viewer Stage */}
               <div className="flex-1 bg-slate-950/90 relative overflow-auto flex items-center justify-center p-4">
-                {isImg && (
+                {isImgB && (
                   <div
                     className="transition-transform duration-100 ease-out flex items-center justify-center"
                     style={{ transform: `scale(${zoomB / 100})`, transformOrigin: "center center" }}
@@ -436,7 +821,7 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({
                   </div>
                 )}
 
-                {isDocPdf && (
+                {isDocPdfB && (
                   <iframe
                     src={urlB}
                     title={fileB.filename}
@@ -444,7 +829,7 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({
                   />
                 )}
 
-                {isVid && (
+                {isVidB && (
                   <video
                     ref={videoRefB}
                     src={urlB}
@@ -453,7 +838,7 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({
                   />
                 )}
 
-                {isAud && (
+                {isAudB && (
                   <div className="w-full max-w-md p-6 bg-slate-850 rounded-xl border border-slate-700/60 flex flex-col items-center">
                     <div className="w-16 h-16 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-400 mb-4">
                       <Play className="w-8 h-8" />
@@ -463,14 +848,89 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({
                   </div>
                 )}
 
-                {!isImg && !isDocPdf && !isVid && !isAud && (
-                  <div className="text-center p-8 text-slate-400">
-                    <p className="text-sm">Preview not directly supported for .{fileB.extension} files.</p>
-                    <p className="text-xs text-slate-500 mt-1">
-                      Both files share the exact same 256-bit BLAKE3 hash and byte length.
-                    </p>
+                {isSheetB && (
+                  <div className="w-full h-full min-h-[360px] flex flex-col">
+                    <SpreadsheetViewer
+                      data={sheetB}
+                      loading={loadingSheetB}
+                      error={sheetErrorB}
+                      filename={fileB.filename}
+                    />
                   </div>
                 )}
+
+                {isTextB && (
+                  <div className="w-full h-full min-h-[360px] flex flex-col">
+                    <TextViewer
+                      data={textB}
+                      loading={loadingTextB}
+                      error={textErrorB}
+                      filename={fileB.filename}
+                    />
+                  </div>
+                )}
+
+                {isWordDocB && (
+                  <div className="w-full h-full min-h-[360px] flex flex-col">
+                    <DocxViewer
+                      data={docxB}
+                      loading={loadingDocxB}
+                      error={docxErrorB}
+                      filename={fileB.filename}
+                    />
+                  </div>
+                )}
+
+                {isPptDocB && (
+                  <div className="w-full h-full min-h-[360px] flex flex-col">
+                    <PptxViewer
+                      data={pptxB}
+                      loading={loadingPptxB}
+                      error={pptxErrorB}
+                      filename={fileB.filename}
+                    />
+                  </div>
+                )}
+
+                {isZipArchiveB && (
+                  <div className="w-full h-full min-h-[360px] flex flex-col">
+                    <ArchiveViewer
+                      data={archiveB}
+                      loading={loadingArchiveB}
+                      error={archiveErrorB}
+                      filename={fileB.filename}
+                    />
+                  </div>
+                )}
+
+                {isNotebookB && (
+                  <div className="w-full h-full min-h-[360px] flex flex-col">
+                    <NotebookViewer
+                      data={notebookB}
+                      loading={loadingNotebookB}
+                      error={notebookErrorB}
+                      filename={fileB.filename}
+                    />
+                  </div>
+                )}
+
+                {!isImgB &&
+                  !isDocPdfB &&
+                  !isVidB &&
+                  !isAudB &&
+                  !isSheetB &&
+                  !isTextB &&
+                  !isWordDocB &&
+                  !isPptDocB &&
+                  !isZipArchiveB &&
+                  !isNotebookB && (
+                    <div className="text-center p-8 text-slate-400">
+                      <p className="text-sm">Preview not directly supported for .{fileB.extension} files.</p>
+                      <p className="text-xs text-slate-500 mt-1">
+                        Both files share the exact same 256-bit BLAKE3 hash and byte length.
+                      </p>
+                    </div>
+                  )}
               </div>
 
               {/* File B Metadata Footer */}

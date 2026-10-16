@@ -28,6 +28,10 @@ rayon = "1.10"
 walkdir = "2.5"
 trash = "5.2"
 image = { version = "0.25", default-features = false, features = ["jpeg", "png", "webp", "bmp"] }
+calamine = "0.36.1"
+csv = "1.4.0"
+zip = { version = "8.6", default-features = false, features = ["deflate"] }
+quick-xml = "0.41"
 
 
 # Read the optimization guideline for more details: https://tauri.app/concept/size/#cargo-configuration

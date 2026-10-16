@@ -3,6 +3,7 @@ import { Shield, Trash2, HardDrive, Layers, RefreshCw } from "lucide-react";
 import { formatBytes } from "../utils/formatters";
 
 import { APP_VERSION } from "../version";
+import logoImg from "../assets/DupliSoft_Logo.png";
 
 interface HeaderProps {
   totalScanned: number;
@@ -28,11 +29,11 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <header className="h-16 px-6 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between select-none">
       {/* Brand & Privacy Badge */}
-      <div className="flex items-center space-x-3">
+      <div className="flex items-center space-x-3.5">
         <img
-          src="/DupliSoft_Logo.png"
+          src={logoImg}
           alt="DupliSoft Logo"
-          className="w-9 h-9 rounded-xl object-contain shadow-md shadow-indigo-500/20 bg-slate-800/80 p-0.5 border border-slate-700/60"
+          className="w-11 h-11 rounded-xl object-contain drop-shadow-lg"
         />
         <div>
           <div className="flex items-center space-x-2">

@@ -1,14 +1,19 @@
 pub mod algorithms;
+pub mod document_preview;
 pub mod hasher;
 pub mod models;
 pub mod scanner;
+pub mod spreadsheet;
 pub mod trash;
 
 use algorithms::{
     compute_image_dhash, compute_image_quality, compute_jaccard_similarity, hamming_distance,
     ImageQuality, SimilarPhotoMatch,
 };
-use models::{ScanOptions, ScanResult, TrashResult};
+use models::{
+    ArchivePreview, DocxPreview, NotebookPreview, PptxPreview, ScanOptions, ScanResult,
+    SpreadsheetPreview, TextPreview, TrashResult,
+};
 use scanner::{run_scan, ScannerState};
 use std::path::Path;
 use std::sync::Arc;
@@ -67,6 +72,48 @@ fn compare_documents_text(text_a: String, text_b: String) -> f64 {
     compute_jaccard_similarity(&text_a, &text_b)
 }
 
+#[tauri::command]
+fn read_spreadsheet_preview(
+    path: String,
+    max_rows: Option<usize>,
+) -> Result<SpreadsheetPreview, String> {
+    spreadsheet::load_spreadsheet_preview(&path, max_rows)
+}
+
+#[tauri::command]
+fn read_text_preview(path: String, max_lines: Option<usize>) -> Result<TextPreview, String> {
+    document_preview::load_text_preview(&path, max_lines)
+}
+
+#[tauri::command]
+fn read_docx_preview(
+    path: String,
+    max_paragraphs: Option<usize>,
+) -> Result<DocxPreview, String> {
+    document_preview::load_docx_preview(&path, max_paragraphs)
+}
+
+#[tauri::command]
+fn read_pptx_preview(path: String) -> Result<PptxPreview, String> {
+    document_preview::load_pptx_preview(&path)
+}
+
+#[tauri::command]
+fn read_archive_preview(
+    path: String,
+    max_entries: Option<usize>,
+) -> Result<ArchivePreview, String> {
+    document_preview::load_archive_preview(&path, max_entries)
+}
+
+#[tauri::command]
+fn read_notebook_preview(
+    path: String,
+    max_cells: Option<usize>,
+) -> Result<NotebookPreview, String> {
+    document_preview::load_notebook_preview(&path, max_cells)
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let scanner_state = Arc::new(ScannerState::new());
@@ -82,8 +129,15 @@ pub fn run() {
             reveal_file,
             get_image_quality,
             compare_images_dhash,
-            compare_documents_text
+            compare_documents_text,
+            read_spreadsheet_preview,
+            read_text_preview,
+            read_docx_preview,
+            read_pptx_preview,
+            read_archive_preview,
+            read_notebook_preview
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
+

@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/MSBHOSLE/DupliSoft/releases"><img src="https://img.shields.io/badge/Release-MB.02%20%7C%20v0.1.0-blue?style=flat-square" alt="Release" /></a>
+  <a href="https://github.com/MSBHOSLE/DupliSoft/releases"><img src="https://img.shields.io/badge/Release-MB.05-blue?style=flat-square" alt="Release" /></a>
   <img src="https://img.shields.io/badge/Platform-macOS%20%7C%20Windows-blue?style=flat-square" alt="Platform" />
   <img src="https://img.shields.io/badge/Privacy-100%25%20Offline-emerald?style=flat-square" alt="Privacy" />
   <img src="https://img.shields.io/badge/Engine-Rust%20%2B%20BLAKE3-orange?style=flat-square" alt="Engine" />
@@ -26,11 +26,12 @@ Download native, pre-compiled standalone installers directly from GitHub Release
 
 | Platform | Installer Type | Direct Download Link | Size | SHA-256 Checksum |
 | :--- | :--- | :--- | :--- | :--- |
+| **macOS (Universal / Apple Silicon & Intel)** | Native `.dmg` **(Latest)** | [**Download DupliSoft (MB.05).dmg**](https://github.com/MSBHOSLE/DupliSoft/releases/download/vMB.05/DupliSoft.MB.05.dmg) | 3.6 MB | `cfff3036f5c34ca5a397eae5fbd2b401d1e77b08cd4b3200681007d5f7196f90` |
 | **macOS (Universal / Apple Silicon & Intel)** | Native `.dmg` | [**Download DupliSoft (MB.02).dmg**](https://github.com/MSBHOSLE/DupliSoft/releases/download/vMB.02/DupliSoft.MB.02.dmg) | 2.53 MB | `9e9363a1026ba7ede24eab4968d36f2b7cfbb5e44b5871bd8d951d21d5743a7d` |
 | **Windows (x64)** | Setup Installer `.exe` | [**Download DupliSoft_0.1.0_x64-setup.exe**](https://github.com/MSBHOSLE/DupliSoft/releases/download/v0.1.0/DupliSoft_0.1.0_x64-setup.exe) | 1.79 MB | `72a657bad63b0b64cb97f624558f6d90a9b8eb2c1e7807d9f94a457ee453c054` |
 | **Windows (x64)** | Enterprise `.msi` | [**Download DupliSoft_0.1.0_x64_en-US.msi**](https://github.com/MSBHOSLE/DupliSoft/releases/download/v0.1.0/DupliSoft_0.1.0_x64_en-US.msi) | 2.55 MB | `4f4238e708bc16ceb17be45fd2f00889c20a674e2dbece166928e42713f0ce59` |
 
-👉 *For previous builds and changelogs, explore the [Full Releases Registry](https://github.com/MSBHOSLE/DupliSoft/releases) or [RELEASES.md](RELEASES.md).*
+👉 *For all release artifacts and detailed changelogs, explore the [Full Releases Registry](https://github.com/MSBHOSLE/DupliSoft/releases) or [RELEASES.md](RELEASES.md).*
 
 ---
 
@@ -72,11 +73,19 @@ Download native, pre-compiled standalone installers directly from GitHub Release
   3. **Stage 3 (Full Multithreaded Hashing):** SIMD-accelerated BLAKE3 hashing parallelized across all CPU cores with Rayon.
   4. **Stage 4 (Safe Deduplication):** Cross-platform reversible deletion directly to macOS Finder Trash or Windows Recycle Bin.
 
-- **🔍 Side-by-Side Visual & Media Inspector:**
-  - **Photos & Images:** Interactive zoom (50% – 600%), pan, actual size, and side-by-side comparison.
-  - **PDF Documents:** Embedded zoomable canvas viewer with page navigation.
-  - **Videos & Movies:** Hardware-accelerated 4K/8K playback with synchronized dual scrubbing and audio controls.
-  - **Audio:** Audio player with duration, bitrate, and playback scrubber.
+- **🔍 Comprehensive Side-by-Side Visual & Document Inspector:**
+  - **Spreadsheets (`.xlsx`, `.xls`, `.csv`):** Multi-sheet tabular inspection powered by Rust `calamine` & `csv` with sheet switching and formatted grid.
+  - **Jupyter Notebooks (`.ipynb`):** Formatted execution cells, markdown narrative blocks, and code blocks.
+  - **Office Documents (`.docx`, `.pptx`, `.pdf`):** In-memory paragraph extraction, slide structure, and embedded zoomable PDF canvas.
+  - **Archives (`.zip`):** Instant examination of compressed archive manifests and file listings without unzipping.
+  - **Photos & Images:** Interactive zoom (50% – 600%), pan, actual size, and bit-identical side-by-side comparison.
+  - **Videos & Audio:** Hardware-accelerated 4K/8K video playback with synchronized dual scrubbing and audio controls.
+  - **Plain Text & Code:** Syntax-friendly line-by-line preview for scripts, source code, and configuration files.
+
+- **🧠 Smart Quality & Similarity Intelligence:**
+  - **Perceptual Image Hash (dHash):** Compares visually similar photos even if modified, compressed, or resized.
+  - **Laplacian Blur & Quality Scoring:** Automatic sharpness estimation to help you keep the highest quality photo.
+  - **Jaccard Text Similarity:** Token overlap calculation to detect document drafts and revisions.
 
 - **✨ Smart Auto-Selectors:**
   - **Keep Oldest:** Automatically marks newer duplicate copies for removal.
@@ -88,6 +97,21 @@ Download native, pre-compiled standalone installers directly from GitHub Release
   - No internet connection required.
   - Zero cloud dependencies, zero external APIs, zero telemetry.
   - File hashes and comparisons are computed purely in local RAM.
+
+---
+
+## 📜 Version History & Changelog Summary
+
+| Version | Highlights & Upgrades | Release Artifact |
+| :--- | :--- | :--- |
+| **`MB.05`** *(Latest)* | **Spreadsheet Viewer (`.xlsx`/`.csv`)**, **Jupyter Notebook Viewer (`.ipynb`)**, brand-new glossy app icons, side-by-side document comparison | [DupliSoft (MB.05).dmg](https://github.com/MSBHOSLE/DupliSoft/releases/download/vMB.05/DupliSoft.MB.05.dmg) |
+| **`MB.04`** | **Word (`.docx`)** & **PowerPoint (`.pptx`)** previewers, **ZIP Archive** content inspector, line-by-line code viewer | [DupliSoft (MB.04).dmg](https://github.com/MSBHOSLE/DupliSoft/releases/tag/vMB.04) |
+| **`MB.03`** | **Perceptual Image Hash (dHash)**, **Laplacian Blur / Sharpness rating**, **Jaccard document text similarity** | [DupliSoft (MB.03).dmg](https://github.com/MSBHOSLE/DupliSoft/releases/tag/vMB.03) |
+| **`MB.02`** | Official high-resolution logo integration, synchronized 600% zoom/pan, OS root directory guardrails, Windows installer packages | [DupliSoft (MB.02).dmg](https://github.com/MSBHOSLE/DupliSoft/releases/tag/vMB.02) |
+| **`MB.01`** | Blazing-fast 4-stage elimination algorithm (BLAKE3 + Rayon), 4K video scrubber, audio player, PDF viewer | [DupliSoft (MB.01).dmg](https://github.com/MSBHOSLE/DupliSoft/releases/tag/vMB.01) |
+| **`MB.00`** | Initial proof-of-concept Tauri v2 desktop application | [DupliSoft (MB.00).dmg](https://github.com/MSBHOSLE/DupliSoft/releases/tag/vMB.00) |
+
+👉 *Full technical details, dates, and cryptographic checksums are available in [RELEASES.md](RELEASES.md).*
 
 ---
 
