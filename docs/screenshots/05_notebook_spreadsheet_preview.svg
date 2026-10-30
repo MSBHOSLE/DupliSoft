@@ -1,0 +1,89 @@
+<svg width="900" height="520" viewBox="0 0 900 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="520" rx="16" fill="#0B0F19"/>
+  <rect x="1" y="1" width="898" height="518" rx="15" stroke="#1F2937" stroke-width="2"/>
+  
+  <!-- Header -->
+  <rect x="0" y="0" width="900" height="44" rx="16" fill="#111827"/>
+  <circle cx="24" cy="22" r="6" fill="#EF4444"/>
+  <circle cx="44" cy="22" r="6" fill="#F59E0B"/>
+  <circle cx="64" cy="22" r="6" fill="#10B981"/>
+  <text x="450" y="27" fill="#9CA3AF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="13" font-weight="500" text-anchor="middle">🔍 DupliSoft Deep Inspector — Jupyter Notebooks (.ipynb) &amp; Spreadsheets (.xlsx, .csv)</text>
+
+  <!-- Left: Jupyter Notebook Viewer -->
+  <rect x="20" y="60" width="420" height="440" rx="10" fill="#111827" stroke="#1F2937"/>
+  <rect x="30" y="70" width="400" height="32" rx="6" fill="#1E1B4B" stroke="#6366F1" stroke-opacity="0.3"/>
+  <text x="45" y="91" fill="#A5B4FC" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="12" font-weight="700">📓 data_analysis_v2.ipynb (Cell-by-Cell)</text>
+
+  <!-- Notebook Markdown Cell -->
+  <rect x="30" y="112" width="400" height="50" rx="6" fill="#1F2937"/>
+  <text x="42" y="132" fill="#38BDF8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="11" font-weight="600">### Data Preprocessing &amp; Feature Engineering</text>
+  <text x="42" y="150" fill="#94A3B8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="10">Normalized 100k data points using MinMax scalar.</text>
+
+  <!-- Notebook Code Cell -->
+  <rect x="30" y="170" width="400" height="90" rx="6" fill="#030712" stroke="#374151"/>
+  <text x="42" y="190" fill="#6B7280" font-family="monospace" font-size="10">In [4]:</text>
+  <text x="90" y="190" fill="#34D399" font-family="monospace" font-size="10">import pandas as pd</text>
+  <text x="90" y="206" fill="#F472B6" font-family="monospace" font-size="10">df = pd.read_csv('dataset.csv')</text>
+  <text x="90" y="222" fill="#60A5FA" font-family="monospace" font-size="10">print(f"Shape: {df.shape}")</text>
+  <text x="90" y="242" fill="#E5E7EB" font-family="monospace" font-size="10">&gt;&gt; Shape: (100000, 24)</text>
+
+  <!-- Notebook Code Cell 2 -->
+  <rect x="30" y="268" width="400" height="80" rx="6" fill="#030712" stroke="#374151"/>
+  <text x="42" y="288" fill="#6B7280" font-family="monospace" font-size="10">In [5]:</text>
+  <text x="90" y="288" fill="#FBBF24" font-family="monospace" font-size="10">model.fit(X_train, y_train)</text>
+  <text x="90" y="304" fill="#34D399" font-family="monospace" font-size="10">score = model.score(X_test, y_test)</text>
+  <text x="90" y="324" fill="#A78BFA" font-family="monospace" font-size="10">&gt;&gt; Accuracy: 98.42%</text>
+
+  <!-- Right: Native Spreadsheet Table Inspector -->
+  <rect x="460" y="60" width="420" height="440" rx="10" fill="#111827" stroke="#1F2937"/>
+  <rect x="470" y="70" width="400" height="32" rx="6" fill="#064E3B" stroke="#059669" stroke-opacity="0.3"/>
+  <text x="485" y="91" fill="#34D399" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="12" font-weight="700">📊 financial_forecast_q4.xlsx (Sheet: 2026_Q4)</text>
+
+  <!-- Spreadsheet Table Header -->
+  <rect x="470" y="112" width="400" height="28" rx="4" fill="#1F2937"/>
+  <text x="485" y="130" fill="#F9FAFB" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="10" font-weight="700">#</text>
+  <text x="520" y="130" fill="#F9FAFB" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="10" font-weight="700">Quarter</text>
+  <text x="610" y="130" fill="#F9FAFB" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="10" font-weight="700">Revenue</text>
+  <text x="710" y="130" fill="#F9FAFB" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="10" font-weight="700">Growth</text>
+  <text x="800" y="130" fill="#F9FAFB" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="10" font-weight="700">Status</text>
+
+  <!-- Row 1 -->
+  <rect x="470" y="142" width="400" height="26" fill="#111827" stroke="#1F2937"/>
+  <text x="485" y="159" fill="#94A3B8" font-family="monospace" font-size="10">1</text>
+  <text x="520" y="159" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="10">2026-Q1</text>
+  <text x="610" y="159" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="10">$1,420,000</text>
+  <text x="710" y="159" fill="#34D399" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="10">+18.4%</text>
+  <text x="800" y="159" fill="#60A5FA" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="10">Audited</text>
+
+  <!-- Row 2 -->
+  <rect x="470" y="170" width="400" height="26" fill="#0B0F19" stroke="#1F2937"/>
+  <text x="485" y="187" fill="#94A3B8" font-family="monospace" font-size="10">2</text>
+  <text x="520" y="187" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="10">2026-Q2</text>
+  <text x="610" y="187" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="10">$1,850,000</text>
+  <text x="710" y="187" fill="#34D399" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="10">+30.2%</text>
+  <text x="800" y="187" fill="#60A5FA" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="10">Audited</text>
+
+  <!-- Row 3 -->
+  <rect x="470" y="198" width="400" height="26" fill="#111827" stroke="#1F2937"/>
+  <text x="485" y="215" fill="#94A3B8" font-family="monospace" font-size="10">3</text>
+  <text x="520" y="215" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="10">2026-Q3</text>
+  <text x="610" y="215" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="10">$2,100,000</text>
+  <text x="710" y="215" fill="#34D399" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="10">+13.5%</text>
+  <text x="800" y="215" fill="#60A5FA" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="10">Audited</text>
+
+  <!-- Row 4 -->
+  <rect x="470" y="226" width="400" height="26" fill="#0B0F19" stroke="#1F2937"/>
+  <text x="485" y="243" fill="#94A3B8" font-family="monospace" font-size="10">4</text>
+  <text x="520" y="243" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="10">2026-Q4</text>
+  <text x="610" y="243" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="10">$2,780,000</text>
+  <text x="710" y="243" fill="#34D399" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="10">+32.4%</text>
+  <text x="800" y="243" fill="#FBBF24" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="10">Projected</text>
+
+  <!-- Row 5 -->
+  <rect x="470" y="254" width="400" height="26" fill="#111827" stroke="#1F2937"/>
+  <text x="485" y="271" fill="#94A3B8" font-family="monospace" font-size="10">5</text>
+  <text x="520" y="271" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="10">2026 Total</text>
+  <text x="610" y="271" fill="#FCD34D" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="10" font-weight="700">$8,150,000</text>
+  <text x="710" y="271" fill="#34D399" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="10" font-weight="700">+23.6%</text>
+  <text x="800" y="271" fill="#34D399" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="10">Consolidated</text>
+</svg>

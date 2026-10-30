@@ -5,13 +5,13 @@
 <h1 align="center">DupliSoft</h1>
 
 <p align="center">
-  <strong>High-Performance, 100% Offline & Private Duplicate File Finder & Previewer</strong><br>
+  <strong>High-Performance, 100% Offline & Private Cross-Platform Duplicate File Finder & Deep Previewer</strong><br>
   <em>Developer: Mahesh Sanjayrao Bhosle</em>
 </p>
 
 <p align="center">
-  <a href="https://github.com/MSBHOSLE/DupliSoft/releases"><img src="https://img.shields.io/badge/Release-MB.05-blue?style=flat-square" alt="Release" /></a>
-  <img src="https://img.shields.io/badge/Platform-macOS%20%7C%20Windows-blue?style=flat-square" alt="Platform" />
+  <a href="https://github.com/MSBHOSLE/DupliSoft/releases/tag/vMB.06"><img src="https://img.shields.io/badge/Release-MB.06%20(v0.6.0)-blue?style=flat-square" alt="Release" /></a>
+  <img src="https://img.shields.io/badge/Platform-macOS%20%7C%20Windows%20%7C%20Linux-blue?style=flat-square" alt="Platform" />
   <img src="https://img.shields.io/badge/Privacy-100%25%20Offline-emerald?style=flat-square" alt="Privacy" />
   <img src="https://img.shields.io/badge/Engine-Rust%20%2B%20BLAKE3-orange?style=flat-square" alt="Engine" />
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License" /></a>
@@ -20,17 +20,18 @@
 
 ---
 
-## 📥 Download DupliSoft (Ready-to-Use Installers)
+## 📥 Download DupliSoft (Version 0.6 / MB.06)
 
-Download native, pre-compiled standalone installers directly from GitHub Releases:
+Native, pre-compiled standalone installers built directly from the source repository:
 
-| Platform | Installer Type | Direct Download Link | Size | SHA-256 Checksum |
+| Operating System | Installer Type | Direct Download Link | Size | SHA-256 Checksum |
 | :--- | :--- | :--- | :--- | :--- |
-| **macOS (Universal / Apple Silicon & Intel)** | Native `.dmg` **(Latest)** | [**Download DupliSoft (MB.05).dmg**](https://github.com/MSBHOSLE/DupliSoft/releases/download/vMB.05/DupliSoft.MB.05.dmg) | 3.6 MB | `cfff3036f5c34ca5a397eae5fbd2b401d1e77b08cd4b3200681007d5f7196f90` |
-| **Windows (x64)** | Setup Installer `.exe` **(Latest)** | [**Download DupliSoft_0.5.0_x64-setup.exe**](https://github.com/MSBHOSLE/DupliSoft/releases/download/vMB.05/DupliSoft_0.5.0_x64-setup.exe) | 2.25 MB | `6a25390b6684ad88d89ad898acf89c9ae4ee32972f7ba1fad60d8d37650e2793` |
-| **Windows (x64)** | Enterprise `.msi` **(Latest)** | [**Download DupliSoft_0.5.0_x64_en-US.msi**](https://github.com/MSBHOSLE/DupliSoft/releases/download/vMB.05/DupliSoft_0.5.0_x64_en-US.msi) | 3.2 MB | `1f1bcdeb14e796309617896cd37d77fcbc11fd5667113444b4f1a2fa7c4b7194` |
+| **macOS (Universal / Apple Silicon & Intel)** | Native `.dmg` **(Latest)** | [**Download DupliSoft (MB.06).dmg**](https://github.com/MSBHOSLE/DupliSoft/releases/download/vMB.06/DupliSoft.MB.06.dmg) | 3.7 MB | `a346984e010fa0c4a8b34f7cb800e478e1dad3754462669f7e31b4711662d785` |
+| **Windows (x64)** | Setup Installer `.exe` **(Latest)** | [**Download DupliSoft_0.6.0_x64-setup.exe**](https://github.com/MSBHOSLE/DupliSoft/releases/download/vMB.06/DupliSoft_0.6.0_x64-setup.exe) | 2.3 MB | `2507fbdca449b38fd337f5874a86689ede81b00e0df3dc571470cca03f5dfca2` |
+| **Windows (x64)** | Enterprise `.msi` **(Latest)** | [**Download DupliSoft_0.6.0_x64_en-US.msi**](https://github.com/MSBHOSLE/DupliSoft/releases/download/vMB.06/DupliSoft_0.6.0_x64_en-US.msi) | 3.2 MB | `3d427f688bfa78f03db0066fcdd98daeb2dc2962cf8e8d0d72485d10cb5d4c36` |
+| **Linux (x64 / Ubuntu / Debian)** | Native `.deb` & `.AppImage` | Available in [**GitHub Release vMB.06**](https://github.com/MSBHOSLE/DupliSoft/releases/tag/vMB.06) | ~4 MB | Verified via Release Manifest |
 
-👉 *For all release artifacts and detailed changelogs, explore the [Full Releases Registry](https://github.com/MSBHOSLE/DupliSoft/releases) or [RELEASES.md](RELEASES.md).*
+👉 *Full release details, artifacts, and cryptographic checksums are permanently tracked in [RELEASES.md](RELEASES.md) and the [GitHub Releases Portal](https://github.com/MSBHOSLE/DupliSoft/releases).*
 
 ---
 
@@ -38,27 +39,33 @@ Download native, pre-compiled standalone installers directly from GitHub Release
 
 <div align="center">
 
-### 1. Main Scan Dashboard & Guardrails
+### 1. Main Scan Dashboard & Full Drag-and-Drop
 <img src="docs/screenshots/01_dashboard.svg" alt="DupliSoft Dashboard" width="100%" />
-<p><em>Folder target selection with automated OS root system directory guardrails and 4-stage pipeline indicators.</em></p>
+<p><em>Drag any folder or drive directly into the window to queue scans with 1-click "Clear All" target controls and automated system root guardrails.</em></p>
 
 <br/>
 
-### 2. Duplicate Detection & Smart Auto-Selection
-<img src="docs/screenshots/02_scan_results.svg" alt="Scan Results & Grouping" width="100%" />
-<p><em>Duplicate groups grouped by BLAKE3 hash with one-click smart filters (Keep Oldest, Keep Newest, Keep Shortest Path).</em></p>
+### 2. Category-Scoped Duplicate Detection & Smart Auto-Selection
+<img src="docs/screenshots/02_scan_results.svg" alt="Scan Results & Category Grouping" width="100%" />
+<p><em>Category pills (Images, Videos, PDFs & Docs, Code & Notebooks, Audio, Archives) with live selection counters and tab-scoped auto-selection filters.</em></p>
 
 <br/>
 
-### 3. Side-by-Side Visual & Media Inspector
+### 3. Side-by-Side Visual & 4K Media Inspector
 <img src="docs/screenshots/03_side_by_side_preview.svg" alt="Side-by-Side Media Inspector" width="100%" />
 <p><em>Synchronized side-by-side zoom (50% – 600%), pan, 4K/8K hardware-accelerated video playback, and PDF inspection.</em></p>
 
 <br/>
 
-### 4. Safe OS Trash Confirmation Dialog
+### 4. Native Spreadsheet & Jupyter Notebook Deep Inspector
+<img src="docs/screenshots/05_notebook_spreadsheet_preview.svg" alt="Notebook and Spreadsheet Inspector" width="100%" />
+<p><em>Native multi-sheet tabular spreadsheet inspection (.xlsx, .csv) and interactive cell-by-cell Jupyter Notebook viewer (.ipynb).</em></p>
+
+<br/>
+
+### 5. Safe OS Trash Confirmation Dialog (Zero Data Loss)
 <img src="docs/screenshots/04_safe_trash_confirmation.svg" alt="Safe Trash Confirmation" width="100%" />
-<p><em>Reversible deletion directly targeting native macOS Finder Trash or Windows Recycle Bin. Zero accidental file loss.</em></p>
+<p><em>Reversible deletion directly targeting native macOS Finder Trash, Windows Recycle Bin, or Linux FreeDesktop Trash. Zero accidental file loss.</em></p>
 
 </div>
 
@@ -66,51 +73,44 @@ Download native, pre-compiled standalone installers directly from GitHub Release
 
 ## ⚡ Key Features
 
-- **Blazing Fast 4-Stage Elimination Algorithm:**
+- **📁 Full Drag-and-Drop Target Queuing:**
+  - Drag folders, external drives, or flash drives anywhere into the app window to instantly add them to the scan list.
+  - Rust path normalization automatically cleans percent-encoded characters, maps single files to parent folders, and deduplicates directories.
+
+- **🧹 1-Click "Clear All" Target Directories:**
+  - Clear your entire target list in one click without tedious one-by-one removals.
+  - 100% safe: clears UI target selection only, never touches physical files on disk.
+
+- **🏷️ Category-Scoped Smart Auto-Selection:**
+  - **Category Tabs:** Switch seamlessly between **All Types**, **Images**, **Videos**, **PDFs & Docs**, **Code & Notebooks**, **Audio**, and **Archives**.
+  - **Scoped Actions:** Clicking *Keep Oldest*, *Keep Newest*, or *Keep Shortest Path* applies **only to the active category tab**, keeping selections in other tabs completely safe and preserved.
+  - **Individual Category Clear:** Clear/deselect files from a single category without resetting selections made in other tabs.
+  - **Live Selection Counters:** Instant badge counts show exactly how many duplicate files are queued for removal in each category.
+
+- **⚡ Blazing Fast 4-Stage Elimination Algorithm:**
   1. **Stage 1 (O(N) Traversal):** File size grouping with zero file reads (eliminates ~95% of unique files instantly).
   2. **Stage 2 (32 KB Chunk Hash):** Reads prefix (16 KB) and suffix (16 KB) with BLAKE3 to discard distinct files of identical size.
   3. **Stage 3 (Full Multithreaded Hashing):** SIMD-accelerated BLAKE3 hashing parallelized across all CPU cores with Rayon.
-  4. **Stage 4 (Safe Deduplication):** Cross-platform reversible deletion directly to macOS Finder Trash or Windows Recycle Bin.
+  4. **Stage 4 (Safe Deduplication):** Cross-platform reversible deletion directly to OS Trash (macOS Finder Trash, Windows Recycle Bin, Linux FreeDesktop Trash).
 
-- **🔍 Comprehensive Side-by-Side Visual & Document Inspector:**
+- **🔍 Multi-Format Deep Inspector (9 Major Categories):**
+  - **Jupyter Notebooks (`.ipynb`):** Formatted cell-by-cell viewer with syntax highlighting and markdown narrative blocks.
   - **Spreadsheets (`.xlsx`, `.xls`, `.csv`):** Multi-sheet tabular inspection powered by Rust `calamine` & `csv` with sheet switching and formatted grid.
-  - **Jupyter Notebooks (`.ipynb`):** Formatted execution cells, markdown narrative blocks, and code blocks.
   - **Office Documents (`.docx`, `.pptx`, `.pdf`):** In-memory paragraph extraction, slide structure, and embedded zoomable PDF canvas.
-  - **Archives (`.zip`):** Instant examination of compressed archive manifests and file listings without unzipping.
+  - **Archives (`.zip`, `.tar`, `.gz`):** Instant examination of compressed archive manifests and file listings without unzipping.
   - **Photos & Images:** Interactive zoom (50% – 600%), pan, actual size, and bit-identical side-by-side comparison.
   - **Videos & Audio:** Hardware-accelerated 4K/8K video playback with synchronized dual scrubbing and audio controls.
-  - **Plain Text & Code:** Syntax-friendly line-by-line preview for scripts, source code, and configuration files.
+  - **Developer Source Code:** Syntax-friendly line-by-line inspection for Python, Rust, C/C++, TypeScript, JavaScript, Go, Swift, Shell, SQL, and 35+ formats.
 
 - **🧠 Smart Quality & Similarity Intelligence:**
   - **Perceptual Image Hash (dHash):** Compares visually similar photos even if modified, compressed, or resized.
   - **Laplacian Blur & Quality Scoring:** Automatic sharpness estimation to help you keep the highest quality photo.
   - **Jaccard Text Similarity:** Token overlap calculation to detect document drafts and revisions.
 
-- **✨ Smart Auto-Selectors:**
-  - **Keep Oldest:** Automatically marks newer duplicate copies for removal.
-  - **Keep Newest:** Retains the latest modified file in each group.
-  - **Keep Shortest Path:** Retains files closest to the root directory.
-  - **Clear Selection:** Reset selection at any time.
-
-- **🔒 100% Private & Air-Gapped:**
+- **🔒 100% Private, Local & Air-Gapped:**
   - No internet connection required.
   - Zero cloud dependencies, zero external APIs, zero telemetry.
-  - File hashes and comparisons are computed purely in local RAM.
-
----
-
-## 📜 Version History & Changelog Summary
-
-| Version | Highlights & Upgrades | Release Artifact |
-| :--- | :--- | :--- |
-| **`MB.05`** *(Latest)* | **Spreadsheet Viewer (`.xlsx`/`.csv`)**, **Jupyter Notebook Viewer (`.ipynb`)**, brand-new glossy app icons, side-by-side document comparison | [DupliSoft (MB.05).dmg](https://github.com/MSBHOSLE/DupliSoft/releases/download/vMB.05/DupliSoft.MB.05.dmg) |
-| **`MB.04`** | **Word (`.docx`)** & **PowerPoint (`.pptx`)** previewers, **ZIP Archive** content inspector, line-by-line code viewer | [DupliSoft (MB.04).dmg](https://github.com/MSBHOSLE/DupliSoft/releases/tag/vMB.04) |
-| **`MB.03`** | **Perceptual Image Hash (dHash)**, **Laplacian Blur / Sharpness rating**, **Jaccard document text similarity** | [DupliSoft (MB.03).dmg](https://github.com/MSBHOSLE/DupliSoft/releases/tag/vMB.03) |
-| **`MB.02`** | Official high-resolution logo integration, synchronized 600% zoom/pan, OS root directory guardrails, Windows installer packages | [DupliSoft (MB.02).dmg](https://github.com/MSBHOSLE/DupliSoft/releases/tag/vMB.02) |
-| **`MB.01`** | Blazing-fast 4-stage elimination algorithm (BLAKE3 + Rayon), 4K video scrubber, audio player, PDF viewer | [DupliSoft (MB.01).dmg](https://github.com/MSBHOSLE/DupliSoft/releases/tag/vMB.01) |
-| **`MB.00`** | Initial proof-of-concept Tauri v2 desktop application | [DupliSoft (MB.00).dmg](https://github.com/MSBHOSLE/DupliSoft/releases/tag/vMB.00) |
-
-👉 *Full technical details, dates, and cryptographic checksums are available in [RELEASES.md](RELEASES.md).*
+  - File hashes and comparisons are computed purely in local volatile RAM.
 
 ---
 
@@ -137,7 +137,7 @@ DupliSoft was benchmarked under reproducible test conditions using real-world mi
 
 - **Air-Gapped by Design:** DupliSoft contains zero network code. It cannot phone home, collect usage statistics, or transmit telemetry.
 - **Local Hashing Only:** Hashes are generated in volatile RAM and immediately discarded upon closing the app.
-- **System Guardrails:** Critical operating system directories (`/System`, `/usr`, `C:\Windows`, `C:\Program Files`) are locked and protected from accidental inclusion.
+- **System Guardrails:** Critical operating system directories (`/System`, `/usr`, `C:\Windows`, `C:\Program Files`, `/boot`, `/etc`) are locked and protected from accidental inclusion.
 
 ---
 
@@ -157,9 +157,16 @@ npm run tauri dev
 To create a standalone native installer:
 - **macOS:** Produces a `.dmg` and `.app` bundle:
   ```bash
+  npm run release
+  ```
+- **Windows:** Compiles natively into an NSIS `.exe` or WiX `.msi` installer:
+  ```bash
   npm run tauri build
   ```
-- **Windows:** Compiles natively into a `.msi` or `.exe` installer.
+- **Linux:** Produces a `.deb` and `.AppImage`:
+  ```bash
+  npm run tauri build
+  ```
 
 ---
 
@@ -167,28 +174,36 @@ To create a standalone native installer:
 
 ```
 DupliSoft/
-├── .github/workflows/ci.yml      # Automated macOS & Windows CI matrix
+├── .github/workflows/ci.yml      # Automated macOS, Windows & Linux CI matrix
 ├── docs/screenshots/             # Application UI previews and screenshots
-├── releases/                     # Versioned DMG archive registry
+│   ├── 01_dashboard.svg          # Drag & Drop and Dashboard preview
+│   ├── 02_scan_results.svg       # Category-Scoped Smart Selection
+│   ├── 03_side_by_side_preview.svg # Deep side-by-side media inspector
+│   ├── 04_safe_trash_confirmation.svg # Safe OS Trash confirmation
+│   └── 05_notebook_spreadsheet_preview.svg # Notebook & Spreadsheet preview
+├── releases/                     # Versioned installer archive registry
 ├── src/                          # Frontend (React 19, TypeScript, Tailwind CSS v4)
 │   ├── components/
-│   │   ├── Header.tsx            # Metrics, privacy badge & trash action
-│   │   ├── Sidebar.tsx           # Directory selector & scan guardrails
+│   │   ├── Header.tsx            # Glossy logo, metrics & safe trash action
+│   │   ├── Sidebar.tsx           # Directory selector, Drag & Drop & Clear All
 │   │   ├── ProgressBanner.tsx    # Real-time scan pipeline status
-│   │   ├── SmartSelectBar.tsx    # One-click smart selection presets
-│   │   ├── DuplicateList.tsx     # Filterable duplicate group cards
-│   │   ├── PreviewModal.tsx      # Side-by-side zoom & video inspector
+│   │   ├── SmartSelectBar.tsx    # Category-scoped auto-selection filters
+│   │   ├── DuplicateList.tsx     # Category tab pills with selection badges
+│   │   ├── PreviewModal.tsx      # Multi-format deep inspector & video player
 │   │   └── TrashConfirmModal.tsx # Safe OS Trash confirmation
 │   ├── types.ts                  # TypeScript interfaces matching Rust models
 │   └── utils/formatters.ts       # Byte/date formatting & file categorizers
 ├── src-tauri/                    # Backend (Rust & Tauri v2)
 │   ├── src/
+│   │   ├── algorithms.rs         # dHash, Laplacian blur variance, Jaccard similarity
+│   │   ├── document_preview.rs   # docx, pptx, notebook, code & archive previewers
+│   │   ├── spreadsheet.rs        # Native calamine Excel & CSV tabular parser
 │   │   ├── hasher.rs             # BLAKE3 prefix/suffix chunk & full streaming hasher
 │   │   ├── scanner.rs            # Multi-stage elimination pipeline & event emitter
-│   │   ├── trash.rs              # Safe OS Trash (macOS NSFileManager / Win Recycle Bin)
+│   │   ├── trash.rs              # Safe OS Trash (macOS / Windows / Linux)
 │   │   ├── models.rs             # Serializable data models
 │   │   └── lib.rs                # Tauri command registration & async runtime
-│   ├── Cargo.toml                # Rust dependencies (blake3, rayon, walkdir, trash)
+│   ├── Cargo.toml                # Rust dependencies (blake3, rayon, calamine, image, trash)
 │   └── tauri.conf.json           # Tauri v2 window and asset protocol configuration
 ├── LICENSE                       # MIT License
 ├── README.md                     # Documentation & download portal
@@ -202,10 +217,11 @@ DupliSoft/
 When you remove duplicate files in DupliSoft, files are **never permanently destroyed**. They are sent directly to:
 - **macOS:** Finder Trash (right-click $\rightarrow$ "Put Back" to restore).
 - **Windows:** Windows Recycle Bin (right-click $\rightarrow$ "Restore").
+- **Linux:** FreeDesktop Trash (`~/.local/share/Trash`).
 
 ---
 
 ## 📄 License
 
-This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.  
 All rights reserved © 2026 Mahesh Sanjayrao Bhosle.

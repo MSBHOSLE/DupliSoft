@@ -27,6 +27,12 @@ jobs:
             bundle_path: |
               src-tauri/target/release/bundle/nsis/*.exe
               src-tauri/target/release/bundle/msi/*.msi
+          - os: ubuntu-22.04
+            target: x86_64-unknown-linux-gnu
+            artifact_name: DupliSoft-Linux
+            bundle_path: |
+              src-tauri/target/release/bundle/deb/*.deb
+              src-tauri/target/release/bundle/appimage/*.AppImage
 
     runs-on: ${{ matrix.os }}
     permissions:
@@ -35,6 +41,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Install Linux System Dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf libasound2-dev libssl-dev
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -66,9 +78,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tagName: v__VERSION__
-          releaseName: "DupliSoft v__VERSION__"
-          releaseBody: "Automated multi-platform release for DupliSoft"
+          tagName: vMB.06
+          releaseName: "DupliSoft (MB.06)"
+          releaseBody: "Automated multi-platform release for DupliSoft (MB.06)"
           releaseDraft: false
           prerelease: false
 
