@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
+import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
+import { FolderDown } from "lucide-react";
 import { Header } from "./components/Header";
 import { Sidebar } from "./components/Sidebar";
 import { ProgressBanner } from "./components/ProgressBanner";
@@ -10,6 +12,7 @@ import { PreviewModal } from "./components/PreviewModal";
 import { TrashConfirmModal } from "./components/TrashConfirmModal";
 import {
   DuplicateGroup,
+  FileCategory,
   ScanOptions,
   ScanProgress,
   ScanResult,
@@ -38,11 +41,98 @@ export const App: React.FC = () => {
 
   const [scanResult, setScanResult] = useState<ScanResult | null>(null);
   const [selectedFilePaths, setSelectedFilePaths] = useState<Set<string>>(new Set());
+  const [categoryFilter, setCategoryFilter] = useState<FileCategory>("all");
 
   // Modal states
   const [previewGroup, setPreviewGroup] = useState<DuplicateGroup | null>(null);
   const [isTrashModalOpen, setIsTrashModalOpen] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
+  const [isDragOver, setIsDragOver] = useState<boolean>(false);
+
+  const handleAddDroppedPaths = async (rawPaths: string[]) => {
+    if (!rawPaths || rawPaths.length === 0) return;
+    try {
+      const validDirs = await invoke<string[]>("normalize_dropped_paths", {
+        paths: rawPaths,
+      });
+      if (validDirs.length > 0) {
+        setDirectories((prev) => Array.from(new Set([...prev, ...validDirs])));
+      }
+    } catch (err) {
+      console.error("Failed to normalize dropped paths:", err);
+      setDirectories((prev) => Array.from(new Set([...prev, ...rawPaths])));
+    }
+  };
+
+  // 1. Native Tauri Window Drag-and-Drop Handler
+  useEffect(() => {
+    let unlistenDragDrop: (() => void) | undefined;
+
+    getCurrentWebviewWindow()
+      .onDragDropEvent(async (event) => {
+        if (event.payload.type === "over" || event.payload.type === "enter") {
+          setIsDragOver(true);
+        } else if (event.payload.type === "drop") {
+          setIsDragOver(false);
+          await handleAddDroppedPaths(event.payload.paths);
+        } else {
+          setIsDragOver(false);
+        }
+      })
+      .then((un) => {
+        unlistenDragDrop = un;
+      })
+      .catch((err) => {
+        console.warn("Native drag-drop listener not registered:", err);
+      });
+
+    return () => {
+      if (unlistenDragDrop) unlistenDragDrop();
+    };
+  }, []);
+
+  // 2. HTML5 Drag-and-Drop Fallback Handler
+  useEffect(() => {
+    const handleDragOver = (e: DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsDragOver(true);
+    };
+
+    const handleDragLeave = (e: DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (!e.relatedTarget || (e.clientX <= 0 && e.clientY <= 0)) {
+        setIsDragOver(false);
+      }
+    };
+
+    const handleDrop = async (e: DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsDragOver(false);
+      if (e.dataTransfer?.files && e.dataTransfer.files.length > 0) {
+        const filePaths: string[] = [];
+        for (let i = 0; i < e.dataTransfer.files.length; i++) {
+          const f = e.dataTransfer.files[i] as any;
+          if (f.path) filePaths.push(f.path);
+        }
+        if (filePaths.length > 0) {
+          await handleAddDroppedPaths(filePaths);
+        }
+      }
+    };
+
+    window.addEventListener("dragover", handleDragOver);
+    window.addEventListener("dragleave", handleDragLeave);
+    window.addEventListener("drop", handleDrop);
+
+    return () => {
+      window.removeEventListener("dragover", handleDragOver);
+      window.removeEventListener("dragleave", handleDragLeave);
+      window.removeEventListener("drop", handleDrop);
+    };
+  }, []);
 
   // Listen to Tauri scan-progress events
   useEffect(() => {
@@ -205,7 +295,20 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-slate-950 text-slate-100 font-sans overflow-hidden">
+    <div className="relative h-screen w-screen flex flex-col bg-slate-950 text-slate-100 font-sans overflow-hidden">
+      {/* Full-Window Drag & Drop Overlay */}
+      {isDragOver && (
+        <div className="absolute inset-0 z-50 pointer-events-none bg-slate-950/85 backdrop-blur-md border-4 border-dashed border-indigo-500 m-4 rounded-3xl flex flex-col items-center justify-center shadow-2xl transition-all duration-200 select-none">
+          <div className="p-6 rounded-3xl bg-indigo-600/25 text-indigo-400 mb-4 border border-indigo-500/40 shadow-xl shadow-indigo-500/10 animate-bounce">
+            <FolderDown className="w-16 h-16" />
+          </div>
+          <h3 className="text-2xl font-bold text-white tracking-tight mb-2">Drop Folders or Drives to Queue Scan</h3>
+          <p className="text-sm text-slate-300 max-w-md text-center">
+            Release to add folders directly to Target Directories for duplicate file inspection
+          </p>
+        </div>
+      )}
+
       {/* Top Header */}
       <Header
         totalScanned={scanResult?.total_files_scanned || progress.files_scanned}
@@ -239,13 +342,18 @@ export const App: React.FC = () => {
           {scanResult && scanResult.groups.length > 0 && (
             <SmartSelectBar
               groups={scanResult.groups}
+              selectedFilePaths={selectedFilePaths}
               setSelectedFilePaths={setSelectedFilePaths}
+              categoryFilter={categoryFilter}
+              setCategoryFilter={setCategoryFilter}
             />
           )}
 
           <DuplicateList
             groups={scanResult?.groups || []}
             selectedFilePaths={selectedFilePaths}
+            categoryFilter={categoryFilter}
+            setCategoryFilter={setCategoryFilter}
             onToggleSelect={handleToggleSelect}
             onOpenPreview={(group) => setPreviewGroup(group)}
             onRevealFile={handleRevealFile}

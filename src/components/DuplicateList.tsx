@@ -32,6 +32,8 @@ import {
 interface DuplicateListProps {
   groups: DuplicateGroup[];
   selectedFilePaths: Set<string>;
+  categoryFilter: FileCategory;
+  setCategoryFilter: (cat: FileCategory) => void;
   onToggleSelect: (path: string) => void;
   onOpenPreview: (group: DuplicateGroup) => void;
   onRevealFile: (path: string) => void;
@@ -40,12 +42,13 @@ interface DuplicateListProps {
 export const DuplicateList: React.FC<DuplicateListProps> = ({
   groups,
   selectedFilePaths,
+  categoryFilter,
+  setCategoryFilter,
   onToggleSelect,
   onOpenPreview,
   onRevealFile,
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState<FileCategory>("all");
 
   const categories: { key: FileCategory; label: string; icon: React.ReactNode }[] = [
     { key: "all", label: "All Types", icon: <File className="w-3.5 h-3.5" /> },
@@ -79,6 +82,21 @@ export const DuplicateList: React.FC<DuplicateListProps> = ({
       return true;
     });
   }, [groups, categoryFilter, searchQuery]);
+
+  // Count selected files per category for badge indicators
+  const categorySelectedCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const g of groups) {
+      const cat = getFileCategory(g.files[0]?.extension || "");
+      for (const f of g.files) {
+        if (selectedFilePaths.has(f.path)) {
+          counts[cat] = (counts[cat] || 0) + 1;
+          counts["all"] = (counts["all"] || 0) + 1;
+        }
+      }
+    }
+    return counts;
+  }, [groups, selectedFilePaths]);
 
   const getCategoryIcon = (ext: string) => {
     if (isImage(ext)) return <Image className="w-4 h-4 text-emerald-400" />;
@@ -118,20 +136,34 @@ export const DuplicateList: React.FC<DuplicateListProps> = ({
       <div className="p-4 bg-slate-950/60 border-b border-slate-800/80 flex items-center justify-between gap-4 select-none">
         {/* Category Pills */}
         <div className="flex items-center space-x-1.5 overflow-x-auto">
-          {categories.map((cat) => (
-            <button
-              key={cat.key}
-              onClick={() => setCategoryFilter(cat.key)}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition ${
-                categoryFilter === cat.key
-                  ? "bg-indigo-600 text-white shadow-sm shadow-indigo-600/30"
-                  : "bg-slate-850 hover:bg-slate-800 text-slate-400 hover:text-slate-200"
-              }`}
-            >
-              {cat.icon}
-              <span>{cat.label}</span>
-            </button>
-          ))}
+          {categories.map((cat) => {
+            const selectedCount = categorySelectedCounts[cat.key] || 0;
+            return (
+              <button
+                key={cat.key}
+                onClick={() => setCategoryFilter(cat.key)}
+                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
+                  categoryFilter === cat.key
+                    ? "bg-indigo-600 text-white shadow-sm shadow-indigo-600/30"
+                    : "bg-slate-850 hover:bg-slate-800 text-slate-400 hover:text-slate-200"
+                }`}
+              >
+                {cat.icon}
+                <span>{cat.label}</span>
+                {selectedCount > 0 && (
+                  <span
+                    className={`ml-1 px-1.5 py-0.2 text-[10px] font-mono rounded-full ${
+                      categoryFilter === cat.key
+                        ? "bg-white/25 text-white"
+                        : "bg-indigo-500/20 text-indigo-300 border border-indigo-500/30"
+                    }`}
+                  >
+                    {selectedCount}
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </div>
 
         {/* Search Input */}

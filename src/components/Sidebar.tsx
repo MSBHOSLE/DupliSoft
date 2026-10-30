@@ -1,5 +1,5 @@
 import React from "react";
-import { FolderPlus, Trash, Play, Square, Settings, Folder } from "lucide-react";
+import { FolderPlus, Trash, Trash2, Play, Square, Settings, Folder, FolderDown } from "lucide-react";
 import { open } from "@tauri-apps/plugin-dialog";
 import { ScanOptions } from "../types";
 
@@ -46,6 +46,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
     setDirectories((prev) => prev.filter((d) => d !== dirToRemove));
   };
 
+  const handleClearAllDirs = () => {
+    setDirectories([]);
+  };
+
   const minSizeOptions = [
     { label: "All sizes", bytes: 0 },
     { label: "> 100 KB", bytes: 100 * 1024 },
@@ -58,17 +62,37 @@ export const Sidebar: React.FC<SidebarProps> = ({
     <aside className="w-80 bg-slate-900 border-r border-slate-800 flex flex-col h-[calc(100vh-4rem)] p-4 select-none">
       {/* Folder Selection Header */}
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-          Target Directories
-        </h2>
-        <button
-          onClick={handleAddFolder}
-          disabled={isScanning}
-          className="flex items-center space-x-1 text-xs px-2.5 py-1 rounded-lg bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 font-medium transition cursor-pointer"
-        >
-          <FolderPlus className="w-3.5 h-3.5" />
-          <span>Add Folder</span>
-        </button>
+        <div className="flex items-center space-x-1.5">
+          <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+            Target Directories
+          </h2>
+          {directories.length > 0 && (
+            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700">
+              {directories.length}
+            </span>
+          )}
+        </div>
+        <div className="flex items-center space-x-1.5">
+          {directories.length > 0 && (
+            <button
+              onClick={handleClearAllDirs}
+              disabled={isScanning}
+              className="flex items-center space-x-1 text-xs px-2 py-1 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 hover:text-rose-300 border border-rose-500/20 font-medium transition cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+              title="Clear all target directories (100% safe, does not delete files)"
+            >
+              <Trash2 className="w-3 h-3" />
+              <span>Clear All</span>
+            </button>
+          )}
+          <button
+            onClick={handleAddFolder}
+            disabled={isScanning}
+            className="flex items-center space-x-1 text-xs px-2.5 py-1 rounded-lg bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 font-medium transition cursor-pointer disabled:opacity-40"
+          >
+            <FolderPlus className="w-3.5 h-3.5" />
+            <span>Add</span>
+          </button>
+        </div>
       </div>
 
       {/* Folders List Container */}
@@ -76,36 +100,46 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {directories.length === 0 ? (
           <div
             onClick={handleAddFolder}
-            className="border-2 border-dashed border-slate-700 hover:border-indigo-500/60 rounded-xl p-6 text-center cursor-pointer transition flex flex-col items-center justify-center space-y-2 group"
+            className="border-2 border-dashed border-slate-700 hover:border-indigo-500/60 rounded-xl p-6 text-center cursor-pointer transition flex flex-col items-center justify-center space-y-2 group bg-slate-950/20 hover:bg-indigo-500/5"
           >
-            <div className="w-10 h-10 rounded-full bg-slate-800 group-hover:bg-indigo-600/20 flex items-center justify-center text-slate-400 group-hover:text-indigo-400 transition">
-              <FolderPlus className="w-5 h-5" />
+            <div className="w-10 h-10 rounded-full bg-slate-800 group-hover:bg-indigo-600/20 flex items-center justify-center text-slate-400 group-hover:text-indigo-400 transition shadow-inner">
+              <FolderDown className="w-5 h-5 animate-pulse" />
             </div>
-            <p className="text-xs text-slate-300 font-medium">Click to Add Folders</p>
-            <p className="text-[11px] text-slate-500">Select any drive, folder, or volume</p>
+            <p className="text-xs text-slate-200 font-semibold">Drop Folders Here</p>
+            <p className="text-[11px] text-slate-500">or click to browse drives & folders</p>
           </div>
         ) : (
-          directories.map((dir) => (
-            <div
-              key={dir}
-              className="group bg-slate-850 hover:bg-slate-800/90 border border-slate-800 rounded-xl p-2.5 flex items-center justify-between text-xs transition"
-            >
-              <div className="flex items-center space-x-2.5 truncate flex-1 pr-2">
-                <Folder className="w-4 h-4 text-indigo-400 shrink-0" />
-                <span className="font-mono text-slate-200 truncate text-[11px]" title={dir}>
-                  {dir}
-                </span>
-              </div>
-              <button
-                onClick={() => handleRemoveDir(dir)}
-                disabled={isScanning}
-                className="opacity-0 group-hover:opacity-100 p-1 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded transition"
-                title="Remove folder"
+          <>
+            {directories.map((dir) => (
+              <div
+                key={dir}
+                className="group bg-slate-850 hover:bg-slate-800/90 border border-slate-800 rounded-xl p-2.5 flex items-center justify-between text-xs transition"
               >
-                <Trash className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          ))
+                <div className="flex items-center space-x-2.5 truncate flex-1 pr-2">
+                  <Folder className="w-4 h-4 text-indigo-400 shrink-0" />
+                  <span className="font-mono text-slate-200 truncate text-[11px]" title={dir}>
+                    {dir}
+                  </span>
+                </div>
+                <button
+                  onClick={() => handleRemoveDir(dir)}
+                  disabled={isScanning}
+                  className="opacity-0 group-hover:opacity-100 p-1 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded transition"
+                  title="Remove folder"
+                >
+                  <Trash className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ))}
+            <button
+              onClick={handleAddFolder}
+              disabled={isScanning}
+              className="w-full py-2 border border-dashed border-slate-800 hover:border-indigo-500/40 rounded-xl text-[11px] text-slate-500 hover:text-indigo-300 transition flex items-center justify-center space-x-1.5"
+            >
+              <FolderDown className="w-3.5 h-3.5" />
+              <span>Drop more folders or click to add</span>
+            </button>
+          </>
         )}
       </div>
 

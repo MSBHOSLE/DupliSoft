@@ -10,6 +10,7 @@ All release artifacts are archived and permanently preserved in the [`releases/`
 
 | Version | Release Name | Date | Platform | File Size | SHA-256 Checksum |
 | :--- | :--- | :--- | :--- | :--- | :--- |
+| `MB.06` | **DupliSoft (MB.06)** | 2026-10-17 07:12:26 | 3.7M | `a346984e010fa0c4a8b34f7cb800e478e1dad3754462669f7e31b4711662d785` |
 | `MB.05` | **DupliSoft (MB.05)** | 2026-10-16 13:57:53 | macOS (`.dmg`) | 3.6 MB | `cfff3036f5c34ca5a397eae5fbd2b401d1e77b08cd4b3200681007d5f7196f90` |
 | `MB.05` | **DupliSoft (MB.05)** | 2026-10-16 14:38:00 | Windows (`.exe`) | 2.25 MB | `6a25390b6684ad88d89ad898acf89c9ae4ee32972f7ba1fad60d8d37650e2793` |
 | `MB.05` | **DupliSoft (MB.05)** | 2026-10-16 14:38:00 | Windows (`.msi`) | 3.2 MB | `1f1bcdeb14e796309617896cd37d77fcbc11fd5667113444b4f1a2fa7c4b7194` |
@@ -25,7 +26,15 @@ All release artifacts are archived and permanently preserved in the [`releases/`
 
 ## 🚀 Version-by-Version Changelog
 
-### 🌟 DupliSoft (MB.05) — Current Release
+### 🚀 DupliSoft (MB.06) — Current Release
+- **📁 Drag-and-Drop Folders & Drives**: Drag any folder, drive, or volume directly from macOS Finder or Windows Explorer anywhere into the DupliSoft window to immediately queue it for scanning.
+- **⚡ Smart Path Normalization Engine**: Built-in Rust command `normalize_dropped_paths` validates and resolves dropped paths, maps dropped files to their containing directories, and eliminates duplicates.
+- **🎯 Full-Window Visual Drop Target**: Glowing drop-zone overlay with animated feedback appears as soon as items hover over the window.
+- **🧹 1-Click "Clear All" Target Directories**: Instantly reset all queued scan folders back to an empty slate with zero risk of deleting actual local files.
+- **🏷️ Category-Scoped Smart Selection & Category Deselect**: Run "Keep Oldest", "Keep Newest", or "Keep Shortest" scoped strictly to the active tab (Images, Videos, PDFs & Docs, Code & Notebooks, etc.), preserving other tabs, and clear/deselect active categories individually with real-time selection badge counters.
+- **🛡️ Zero Deletion Risk Guarantee**: Adding folders by drag-and-drop only prepares search targets; the 4-tier cryptographic safety verification and native OS Trash safeguards remain fully active.
+
+### 🌟 DupliSoft (MB.05)
 - **📈 Native Spreadsheet Inspector (`.xlsx`, `.xls`, `.csv`)**: Multi-sheet tabular inspection powered by Rust `calamine` & `csv`. View cell contents, navigate between multiple worksheets, and compare datasets side-by-side.
 - **📓 Jupyter Notebook Inspector (`.ipynb`)**: Direct parsing and syntax rendering of markdown narrative cells and Python code blocks.
 - **🎨 Visual Identity & Icon Overhaul**: Brand-new glossy metallic app icon integrated across macOS `.icns`, Windows `.ico`, and multi-resolution app icons.
@@ -57,3 +66,4 @@ All release artifacts are archived and permanently preserved in the [`releases/`
 
 ### 🐣 DupliSoft (MB.00)
 - **Initial Prototype**: Core proof-of-concept Tauri v2 desktop application and basic duplicate grouping.
+

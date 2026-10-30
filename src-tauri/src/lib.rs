@@ -114,6 +114,47 @@ fn read_notebook_preview(
     document_preview::load_notebook_preview(&path, max_cells)
 }
 
+fn clean_path_string(raw: &str) -> String {
+    let stripped = raw.strip_prefix("file://").unwrap_or(raw);
+    let mut result = String::with_capacity(stripped.len());
+    let bytes = stripped.as_bytes();
+    let mut i = 0;
+    while i < bytes.len() {
+        if bytes[i] == b'%' && i + 2 < bytes.len() {
+            if let Ok(byte_val) = u8::from_str_radix(
+                std::str::from_utf8(&bytes[i + 1..=i + 2]).unwrap_or(""),
+                16,
+            ) {
+                result.push(byte_val as char);
+                i += 3;
+                continue;
+            }
+        }
+        result.push(bytes[i] as char);
+        i += 1;
+    }
+    result
+}
+
+#[tauri::command]
+fn normalize_dropped_paths(paths: Vec<String>) -> Vec<String> {
+    let mut resolved = Vec::new();
+    for raw in paths {
+        let cleaned = clean_path_string(&raw);
+        let path = Path::new(&cleaned);
+        if path.is_dir() {
+            resolved.push(cleaned);
+        } else if path.is_file() {
+            if let Some(parent) = path.parent() {
+                resolved.push(parent.to_string_lossy().to_string());
+            }
+        }
+    }
+    resolved.sort();
+    resolved.dedup();
+    resolved
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let scanner_state = Arc::new(ScannerState::new());
@@ -135,9 +176,47 @@ pub fn run() {
             read_docx_preview,
             read_pptx_preview,
             read_archive_preview,
-            read_notebook_preview
+            read_notebook_preview,
+            normalize_dropped_paths
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_clean_path_string() {
+        assert_eq!(clean_path_string("/path/to/folder"), "/path/to/folder");
+        assert_eq!(clean_path_string("file:///path/to/folder"), "/path/to/folder");
+        assert_eq!(
+            clean_path_string("file:///Users/john/My%20Documents"),
+            "/Users/john/My Documents"
+        );
+    }
+
+    #[test]
+    fn test_normalize_dropped_paths() {
+        let temp_dir = std::env::temp_dir();
+        let sub_dir = temp_dir.join("duplisoft_drag_test_dir");
+        let _ = std::fs::create_dir_all(&sub_dir);
+        let test_file = sub_dir.join("sample.txt");
+        let _ = std::fs::write(&test_file, b"test");
+
+        let input = vec![
+            sub_dir.to_string_lossy().to_string(),
+            test_file.to_string_lossy().to_string(),
+            format!("file://{}", sub_dir.to_string_lossy()),
+        ];
+        let normalized = normalize_dropped_paths(input);
+        assert_eq!(normalized.len(), 1);
+        assert_eq!(normalized[0], sub_dir.to_string_lossy().to_string());
+
+        let _ = std::fs::remove_file(test_file);
+        let _ = std::fs::remove_dir(sub_dir);
+    }
+}
+
 
