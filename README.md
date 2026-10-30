@@ -27,9 +27,11 @@ Native, pre-compiled standalone installers built directly from the source reposi
 | Operating System | Installer Type | Direct Download Link | Size | SHA-256 Checksum |
 | :--- | :--- | :--- | :--- | :--- |
 | **macOS (Universal / Apple Silicon & Intel)** | Native `.dmg` **(Latest)** | [**Download DupliSoft (MB.06).dmg**](https://github.com/MSBHOSLE/DupliSoft/releases/download/vMB.06/DupliSoft.MB.06.dmg) | 3.7 MB | `a346984e010fa0c4a8b34f7cb800e478e1dad3754462669f7e31b4711662d785` |
-| **Windows (x64)** | Setup Installer `.exe` **(Latest)** | [**Download DupliSoft_0.6.0_x64-setup.exe**](https://github.com/MSBHOSLE/DupliSoft/releases/download/vMB.06/DupliSoft_0.6.0_x64-setup.exe) | 2.3 MB | `2507fbdca449b38fd337f5874a86689ede81b00e0df3dc571470cca03f5dfca2` |
-| **Windows (x64)** | Enterprise `.msi` **(Latest)** | [**Download DupliSoft_0.6.0_x64_en-US.msi**](https://github.com/MSBHOSLE/DupliSoft/releases/download/vMB.06/DupliSoft_0.6.0_x64_en-US.msi) | 3.2 MB | `3d427f688bfa78f03db0066fcdd98daeb2dc2962cf8e8d0d72485d10cb5d4c36` |
-| **Linux (x64 / Ubuntu / Debian)** | Native `.deb` & `.AppImage` | Available in [**GitHub Release vMB.06**](https://github.com/MSBHOSLE/DupliSoft/releases/tag/vMB.06) | ~4 MB | Verified via Release Manifest |
+| **Windows (x64)** | Setup Installer `.exe` **(Latest)** | [**Download DupliSoft_0.6.0_x64-setup.exe**](https://github.com/MSBHOSLE/DupliSoft/releases/download/vMB.06/DupliSoft_0.6.0_x64-setup.exe) | 2.3 MB | `92b6bbc965f0876d4b165f20a09148db985cb992d992994c9ba26a96bc2412d2` |
+| **Windows (x64)** | Enterprise `.msi` **(Latest)** | [**Download DupliSoft_0.6.0_x64_en-US.msi**](https://github.com/MSBHOSLE/DupliSoft/releases/download/vMB.06/DupliSoft_0.6.0_x64_en-US.msi) | 3.2 MB | `bc8f3787470e9c5b73bf3a4bef3ef1587b9ec3840e6761f2518e11b332b0d359` |
+| **Linux (Debian / Ubuntu / Mint)** | Native `.deb` Package | [**Download DupliSoft_0.6.0_amd64.deb**](https://github.com/MSBHOSLE/DupliSoft/releases/download/vMB.06/DupliSoft_0.6.0_amd64.deb) | 3.6 MB | `7d90eea05f854833ac50ca02f1e16104bc530491b9201f357f866b1ba8891dc4` |
+| **Linux (Universal Standalone)** | AppImage Executable | [**Download DupliSoft_0.6.0_amd64.AppImage**](https://github.com/MSBHOSLE/DupliSoft/releases/download/vMB.06/DupliSoft_0.6.0_amd64.AppImage) | 78.4 MB | `11a27ff3f926d1e271892bb6a1ac1a2d59049a46618588523b10b00c3b0eb688` |
+| **Linux (Fedora / RHEL / openSUSE)** | RPM Package | [**Download DupliSoft-0.6.0-1.x86_64.rpm**](https://github.com/MSBHOSLE/DupliSoft/releases/download/vMB.06/DupliSoft-0.6.0-1.x86_64.rpm) | 3.6 MB | `2227c8782c913bfc99dd44edf209a341e9df6400bfbbf53b93eef250787e9c15` |
 
 👉 *Full release details, artifacts, and cryptographic checksums are permanently tracked in [RELEASES.md](RELEASES.md) and the [GitHub Releases Portal](https://github.com/MSBHOSLE/DupliSoft/releases).*
 
