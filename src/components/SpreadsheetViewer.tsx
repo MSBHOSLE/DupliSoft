@@ -131,7 +131,7 @@ export const SpreadsheetViewer: React.FC<SpreadsheetViewerProps> = ({
               currentSheet.rows.map((row, rIdx) => (
                 <tr
                   key={rIdx}
-                  className={`border-b border-slate-850/60 hover:bg-slate-800/40 transition-colors ${
+                  className={`border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors ${
                     rIdx % 2 === 0 ? "bg-slate-950" : "bg-slate-900/30"
                   }`}
                 >
@@ -143,7 +143,7 @@ export const SpreadsheetViewer: React.FC<SpreadsheetViewerProps> = ({
                   {row.map((cell, cIdx) => (
                     <td
                       key={cIdx}
-                      className="px-3 py-1 border-r border-slate-850/60 text-slate-300 whitespace-nowrap max-w-[240px] truncate"
+                      className="px-3 py-1 border-r border-slate-800/60 text-slate-300 select-text whitespace-nowrap max-w-[240px] truncate"
                       title={cell}
                     >
                       {cell === "" ? (
@@ -157,7 +157,7 @@ export const SpreadsheetViewer: React.FC<SpreadsheetViewerProps> = ({
                   {Array.from({ length: Math.max(0, currentSheet.headers.length - row.length) }).map((_, padIdx) => (
                     <td
                       key={`pad-${padIdx}`}
-                      className="px-3 py-1 border-r border-slate-850/60 text-slate-700"
+                      className="px-3 py-1 border-r border-slate-800/60 text-slate-700"
                     >
                       -
                     </td>

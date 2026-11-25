@@ -1,6 +1,6 @@
-import React, { useMemo } from "react";
-import { Sparkles, History, FolderTree, RotateCcw, XCircle } from "lucide-react";
-import { DuplicateGroup, FileCategory } from "../types";
+import React, { useMemo, useState } from "react";
+import { Sparkles, History, FolderTree, RotateCcw, XCircle, ShieldCheck } from "lucide-react";
+import { DuplicateGroup, FileCategory, FileEntry } from "../types";
 import { getFileCategory } from "../utils/formatters";
 
 interface SmartSelectBarProps {
@@ -22,12 +22,22 @@ const CATEGORY_NAMES: Record<FileCategory, string> = {
   other: "Other Files",
 };
 
+function getTimeMs(f: FileEntry): number {
+  return f.modified_ms ?? f.modified * 1000;
+}
+
+function normFolderPath(p: string): string {
+  return p.replace(/\\/g, "/").replace(/\/+$/, "").toLowerCase();
+}
+
 export const SmartSelectBar: React.FC<SmartSelectBarProps> = ({
   groups,
   selectedFilePaths,
   setSelectedFilePaths,
   categoryFilter,
 }) => {
+  const [protectedFolder, setProtectedFolder] = useState<string>("");
+
   // Filter groups according to the active category
   const activeGroups = useMemo(() => {
     if (categoryFilter === "all") return groups;
@@ -36,6 +46,23 @@ export const SmartSelectBar: React.FC<SmartSelectBarProps> = ({
       return getFileCategory(firstFile?.extension || "") === categoryFilter;
     });
   }, [groups, categoryFilter]);
+
+  // Unique folders present in active groups for "Protect Folder" quick rule
+  const availableFolders = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const g of activeGroups) {
+      const seenInGroup = new Set<string>();
+      for (const f of g.files) {
+        if (f.directory && !seenInGroup.has(f.directory)) {
+          seenInGroup.add(f.directory);
+          counts.set(f.directory, (counts.get(f.directory) || 0) + 1);
+        }
+      }
+    }
+    return Array.from(counts.entries())
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+      .slice(0, 30);
+  }, [activeGroups]);
 
   // All file paths belonging to the active category
   const activeCategoryPaths = useMemo(() => {
@@ -48,7 +75,6 @@ export const SmartSelectBar: React.FC<SmartSelectBarProps> = ({
     return set;
   }, [activeGroups]);
 
-  // How many selected files are in the active category
   const selectedInActiveCategory = useMemo(() => {
     let count = 0;
     for (const path of selectedFilePaths) {
@@ -57,67 +83,96 @@ export const SmartSelectBar: React.FC<SmartSelectBarProps> = ({
     return count;
   }, [selectedFilePaths, activeCategoryPaths]);
 
-  // How many selected files are in other categories
   const selectedInOtherCategories = useMemo(() => {
     if (categoryFilter === "all") return 0;
     return selectedFilePaths.size - selectedInActiveCategory;
   }, [selectedFilePaths.size, selectedInActiveCategory, categoryFilter]);
 
-  // 1. Keep Oldest: For activeGroups only, keep earliest modified file, mark newer copies
+  // Helper applying a deterministic keeper rule while guaranteeing >= 1 copy stays kept per group
+  const applySmartRule = (comparator: (a: FileEntry, b: FileEntry) => number) => {
+    setSelectedFilePaths((prev) => {
+      const next = new Set(prev);
+      for (const path of activeCategoryPaths) {
+        next.delete(path);
+      }
+      for (const group of activeGroups) {
+        if (group.files.length < 2) continue;
+        const sorted = [...group.files].sort(comparator);
+        for (let i = 1; i < sorted.length; i++) {
+          next.add(sorted[i].path);
+        }
+      }
+      return next;
+    });
+  };
+
+  // 1. Keep Oldest (millisecond precision + path length tie-breaker)
   const handleKeepOldest = () => {
-    setSelectedFilePaths((prev) => {
-      const next = new Set(prev);
-      for (const path of activeCategoryPaths) {
-        next.delete(path);
-      }
-      for (const group of activeGroups) {
-        if (group.files.length < 2) continue;
-        const sorted = [...group.files].sort((a, b) => a.modified - b.modified);
-        for (let i = 1; i < sorted.length; i++) {
-          next.add(sorted[i].path);
-        }
-      }
-      return next;
-    });
+    applySmartRule(
+      (a, b) =>
+        getTimeMs(a) - getTimeMs(b) ||
+        a.path.length - b.path.length ||
+        a.path.localeCompare(b.path)
+    );
   };
 
-  // 2. Keep Newest: For activeGroups only, keep newest modified file, mark older copies
+  // 2. Keep Newest (millisecond precision + path length tie-breaker)
   const handleKeepNewest = () => {
-    setSelectedFilePaths((prev) => {
-      const next = new Set(prev);
-      for (const path of activeCategoryPaths) {
-        next.delete(path);
-      }
-      for (const group of activeGroups) {
-        if (group.files.length < 2) continue;
-        const sorted = [...group.files].sort((a, b) => b.modified - a.modified);
-        for (let i = 1; i < sorted.length; i++) {
-          next.add(sorted[i].path);
-        }
-      }
-      return next;
-    });
+    applySmartRule(
+      (a, b) =>
+        getTimeMs(b) - getTimeMs(a) ||
+        a.path.length - b.path.length ||
+        a.path.localeCompare(b.path)
+    );
   };
 
-  // 3. Keep Shortest: For activeGroups only, keep shortest file path, mark others
+  // 3. Keep Shortest Path (cleanest hierarchy + oldest timestamp tie-breaker)
   const handleKeepShortestPath = () => {
+    applySmartRule(
+      (a, b) =>
+        a.path.length - b.path.length ||
+        getTimeMs(a) - getTimeMs(b) ||
+        a.path.localeCompare(b.path)
+    );
+  };
+
+  // 4. Keep In Protected Folder (only selects outside copies in groups that have a copy inside protectedFolder)
+  const handleProtectFolder = (folderPath: string) => {
+    setProtectedFolder(folderPath);
+    if (!folderPath) return;
+
+    const targetNorm = normFolderPath(folderPath);
     setSelectedFilePaths((prev) => {
       const next = new Set(prev);
-      for (const path of activeCategoryPaths) {
-        next.delete(path);
-      }
       for (const group of activeGroups) {
         if (group.files.length < 2) continue;
-        const sorted = [...group.files].sort((a, b) => a.path.length - b.path.length);
-        for (let i = 1; i < sorted.length; i++) {
-          next.add(sorted[i].path);
+        const inside: FileEntry[] = [];
+        const outside: FileEntry[] = [];
+
+        for (const f of group.files) {
+          const dirNorm = normFolderPath(f.directory);
+          if (dirNorm === targetNorm || dirNorm.startsWith(`${targetNorm}/`)) {
+            inside.push(f);
+          } else {
+            outside.push(f);
+          }
+        }
+
+        // Only act on groups that actually have at least one copy safely inside protectedFolder
+        if (inside.length > 0 && outside.length > 0) {
+          for (const f of group.files) {
+            next.delete(f.path);
+          }
+          for (const f of outside) {
+            next.add(f.path);
+          }
         }
       }
       return next;
     });
   };
 
-  // 4. Deselect Category: Deselect only files in the active category without clearing other categories
+  // 5. Deselect Category without touching other tabs
   const handleDeselectCategory = () => {
     if (categoryFilter === "all") {
       setSelectedFilePaths(new Set());
@@ -132,7 +187,6 @@ export const SmartSelectBar: React.FC<SmartSelectBarProps> = ({
     }
   };
 
-  // 5. Global Deselect All: Clear all categories
   const handleDeselectAll = () => {
     setSelectedFilePaths(new Set());
   };
@@ -143,7 +197,7 @@ export const SmartSelectBar: React.FC<SmartSelectBarProps> = ({
   const isFiltered = categoryFilter !== "all";
 
   return (
-    <div className="bg-slate-900/95 border-b border-slate-800 px-5 py-2.5 flex items-center justify-between text-xs select-none">
+    <div className="bg-slate-900/95 border-b border-slate-800 px-5 py-2.5 flex items-center justify-between flex-wrap gap-2 text-xs select-none shrink-0">
       {/* Left: Scope Info */}
       <div className="flex items-center space-x-2.5">
         <div className="flex items-center space-x-1.5 text-indigo-400">
@@ -160,7 +214,7 @@ export const SmartSelectBar: React.FC<SmartSelectBarProps> = ({
           >
             {currentCategoryName}
           </span>
-          <span className="text-[10px] font-mono text-slate-400 px-1 py-0.2 rounded bg-slate-900 border border-slate-800">
+          <span className="text-[10px] font-mono text-slate-400 px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800">
             {activeGroups.length} {activeGroups.length === 1 ? "group" : "groups"}
           </span>
           {isFiltered && selectedInOtherCategories > 0 && (
@@ -175,38 +229,58 @@ export const SmartSelectBar: React.FC<SmartSelectBarProps> = ({
       </div>
 
       {/* Right: Smart Actions */}
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center flex-wrap gap-2">
         <button
           onClick={handleKeepOldest}
           disabled={activeGroups.length === 0}
-          className="flex items-center space-x-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 hover:text-white text-slate-300 rounded-lg transition disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
-          title={`Keep oldest file in each ${currentCategoryName} duplicate group, mark newer copies for deletion`}
+          className="flex items-center space-x-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 hover:text-white text-slate-300 rounded-lg border border-slate-700/60 transition disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+          title={`Keep earliest file in each ${currentCategoryName} group`}
         >
           <History className="w-3.5 h-3.5 text-blue-400" />
-          <span>Keep Oldest Copy</span>
+          <span>Keep Oldest</span>
         </button>
 
         <button
           onClick={handleKeepNewest}
           disabled={activeGroups.length === 0}
-          className="flex items-center space-x-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 hover:text-white text-slate-300 rounded-lg transition disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
-          title={`Keep most recently modified file in each ${currentCategoryName} duplicate group, mark older copies for deletion`}
+          className="flex items-center space-x-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 hover:text-white text-slate-300 rounded-lg border border-slate-700/60 transition disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+          title={`Keep latest file in each ${currentCategoryName} group`}
         >
           <History className="w-3.5 h-3.5 text-emerald-400" />
-          <span>Keep Newest Copy</span>
+          <span>Keep Newest</span>
         </button>
 
         <button
           onClick={handleKeepShortestPath}
           disabled={activeGroups.length === 0}
-          className="flex items-center space-x-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 hover:text-white text-slate-300 rounded-lg transition disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
-          title={`Keep files with cleanest/shortest folder paths in ${currentCategoryName}`}
+          className="flex items-center space-x-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 hover:text-white text-slate-300 rounded-lg border border-slate-700/60 transition disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+          title={`Keep cleanest/shortest folder path in ${currentCategoryName}`}
         >
           <FolderTree className="w-3.5 h-3.5 text-amber-400" />
           <span>Keep Shortest Path</span>
         </button>
 
-        {/* Deselect only this category */}
+        {availableFolders.length > 1 && (
+          <div className="flex items-center space-x-1 bg-slate-800 border border-slate-700/60 rounded-lg px-2 py-1">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+            <select
+              value={protectedFolder}
+              onChange={(e) => handleProtectFolder(e.target.value)}
+              className="bg-transparent text-[11px] text-slate-300 outline-none max-w-[165px] cursor-pointer"
+              title="Keep copies inside this master folder and mark external copies for trash"
+            >
+              <option value="" className="bg-slate-900">
+                Protect Master Folder...
+              </option>
+              {availableFolders.map(([dir, cnt]) => (
+                <option key={dir} value={dir} className="bg-slate-900">
+                  Keep in {dir.split(/[/\\]/).filter(Boolean).pop() || dir} ({cnt})
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
         {selectedInActiveCategory > 0 && (
           <button
             onClick={handleDeselectCategory}
@@ -219,12 +293,13 @@ export const SmartSelectBar: React.FC<SmartSelectBarProps> = ({
           >
             <RotateCcw className="w-3.5 h-3.5 text-rose-400" />
             <span>
-              {isFiltered ? `Clear ${currentCategoryName} (${selectedInActiveCategory})` : "Deselect All"}
+              {isFiltered
+                ? `Clear ${currentCategoryName} (${selectedInActiveCategory})`
+                : "Deselect All"}
             </span>
           </button>
         )}
 
-        {/* If filtered and selections exist in other categories, offer option to clear all */}
         {isFiltered && selectedInOtherCategories > 0 && (
           <button
             onClick={handleDeselectAll}

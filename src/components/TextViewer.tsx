@@ -118,13 +118,13 @@ export const TextViewer: React.FC<TextViewerProps> = ({
                 className="flex items-start hover:bg-slate-900/60 transition-colors py-0.5 leading-relaxed"
               >
                 {/* Line number gutter */}
-                <span className="w-12 min-w-12 text-right pr-3 select-none text-[10px] text-slate-600 font-mono border-r border-slate-850">
+                <span className="w-12 min-w-12 text-right pr-3 select-none text-[10px] text-slate-600 font-mono border-r border-slate-800">
                   {originalIdx}
                 </span>
 
                 {/* Line text */}
                 <span
-                  className={`pl-3 pr-4 flex-1 text-slate-300 ${
+                  className={`pl-3 pr-4 flex-1 text-slate-300 select-text ${
                     wrapLines ? "break-all whitespace-pre-wrap" : "whitespace-pre overflow-x-auto"
                   }`}
                 >

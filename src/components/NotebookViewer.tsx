@@ -93,7 +93,7 @@ export const NotebookViewer: React.FC<NotebookViewerProps> = ({
               className={`rounded border transition-colors ${
                 cell.cell_type === "code"
                   ? "bg-slate-900/60 border-slate-800/90 hover:border-slate-700"
-                  : "bg-slate-900/30 border-slate-850 hover:border-slate-800"
+                  : "bg-slate-900/30 border-slate-800 hover:border-slate-700"
               }`}
             >
               {/* Cell Header Badge */}
@@ -127,11 +127,11 @@ export const NotebookViewer: React.FC<NotebookViewerProps> = ({
                   <div className="space-y-0.5">
                     {cell.source.map((line, lineIdx) => (
                       <div key={lineIdx} className="flex items-start leading-relaxed">
-                        <span className="w-7 min-w-7 text-right pr-2 select-none text-[9px] text-slate-600 font-mono border-r border-slate-850">
+                        <span className="w-7 min-w-7 text-right pr-2 select-none text-[9px] text-slate-600 font-mono border-r border-slate-800">
                           {lineIdx + 1}
                         </span>
                         <span
-                          className={`pl-2 flex-1 whitespace-pre-wrap break-all ${
+                          className={`pl-2 flex-1 select-text whitespace-pre-wrap break-all ${
                             cell.cell_type === "code" ? "text-emerald-300/90 font-mono" : "text-slate-300 font-sans"
                           }`}
                         >

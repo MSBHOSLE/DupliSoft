@@ -347,7 +347,7 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({
       setQualityB(null);
     }
 
-    if (isImg && fileA && fileB && fileA.path !== fileB.path) {
+    if (isImgA && isImgB && fileA && fileB && fileA.path !== fileB.path) {
       invoke<SimilarPhotoMatch>("compare_images_dhash", {
         pathA: fileA.path,
         pathB: fileB.path,
@@ -357,7 +357,7 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({
     } else {
       setDhashMatch(null);
     }
-  }, [fileAIndex, fileBIndex, isImg, fileA.path, fileB.path]);
+  }, [fileAIndex, fileBIndex, isImg, isImgA, isImgB, fileA.path, fileB.path]);
 
   const handleZoomChange = (newZoom: number, target: "A" | "B") => {
     const clamped = Math.max(50, Math.min(600, newZoom));
@@ -410,7 +410,7 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({
                 <h3 className="font-semibold text-lg text-white">Side-by-Side File Inspector</h3>
                 <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1 font-mono">
                   <ShieldCheck className="w-3.5 h-3.5" />
-                  Identical Hash: {group.hash.slice(0, 12)}...
+                  {group.byte_verified ? "Byte-Verified" : "BLAKE3"}: {group.hash.slice(0, 12)}...
                 </span>
                 {dhashMatch && (
                   <span className="text-xs px-2.5 py-0.5 rounded-full bg-violet-500/10 text-violet-400 border border-violet-500/20 flex items-center gap-1 font-mono">
@@ -631,7 +631,7 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({
               )}
 
               {isAudA && (
-                <div className="w-full max-w-md p-6 bg-slate-850 rounded-xl border border-slate-700/60 flex flex-col items-center">
+                <div className="w-full max-w-md p-6 bg-slate-900 rounded-xl border border-slate-700/60 flex flex-col items-center">
                   <div className="w-16 h-16 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-400 mb-4">
                     <Play className="w-8 h-8" />
                   </div>
@@ -728,7 +728,7 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({
             {/* File A Metadata Footer */}
             <div className="px-4 py-2.5 bg-slate-950 border-t border-slate-800 text-xs text-slate-400 flex flex-col gap-1">
               <div className="flex items-center justify-between">
-                <span className="font-mono text-slate-300 truncate max-w-md" title={fileA.path}>
+                <span className="font-mono text-slate-300 truncate max-w-md select-text" title={fileA.path}>
                   {fileA.path}
                 </span>
                 <span
@@ -839,7 +839,7 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({
                 )}
 
                 {isAudB && (
-                  <div className="w-full max-w-md p-6 bg-slate-850 rounded-xl border border-slate-700/60 flex flex-col items-center">
+                  <div className="w-full max-w-md p-6 bg-slate-900 rounded-xl border border-slate-700/60 flex flex-col items-center">
                     <div className="w-16 h-16 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-400 mb-4">
                       <Play className="w-8 h-8" />
                     </div>
@@ -936,7 +936,7 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({
               {/* File B Metadata Footer */}
               <div className="px-4 py-2.5 bg-slate-950 border-t border-slate-800 text-xs text-slate-400 flex flex-col gap-1">
                 <div className="flex items-center justify-between">
-                  <span className="font-mono text-slate-300 truncate max-w-md" title={fileB.path}>
+                  <span className="font-mono text-slate-300 truncate max-w-md select-text" title={fileB.path}>
                     {fileB.path}
                   </span>
                   <span

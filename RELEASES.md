@@ -10,7 +10,7 @@ All release artifacts are archived and permanently preserved in the [`releases/`
 
 | Version | Release Name | Date | Platform | File Size | SHA-256 Checksum |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `MB.06` | **DupliSoft (MB.06)** | 2026-10-17 07:12:26 | 3.7M | `a346984e010fa0c4a8b34f7cb800e478e1dad3754462669f7e31b4711662d785` |
+| `MB.06` | **DupliSoft (MB.06)** | 2026-10-17 07:12:26 | macOS (`.dmg`) | 3.7M | `a346984e010fa0c4a8b34f7cb800e478e1dad3754462669f7e31b4711662d785` |
 | `MB.05` | **DupliSoft (MB.05)** | 2026-10-16 13:57:53 | macOS (`.dmg`) | 3.6 MB | `cfff3036f5c34ca5a397eae5fbd2b401d1e77b08cd4b3200681007d5f7196f90` |
 | `MB.05` | **DupliSoft (MB.05)** | 2026-10-16 14:38:00 | Windows (`.exe`) | 2.25 MB | `6a25390b6684ad88d89ad898acf89c9ae4ee32972f7ba1fad60d8d37650e2793` |
 | `MB.05` | **DupliSoft (MB.05)** | 2026-10-16 14:38:00 | Windows (`.msi`) | 3.2 MB | `1f1bcdeb14e796309617896cd37d77fcbc11fd5667113444b4f1a2fa7c4b7194` |
@@ -25,6 +25,11 @@ All release artifacts are archived and permanently preserved in the [`releases/`
 ---
 
 ## 🚀 Version-by-Version Changelog
+
+### 🛡️ DupliSoft (MB.07) — Accuracy, Pro UI & Cross-OS Update
+- **100% Accuracy & Zero Self-Duplicates**: Canonicalized scan targets strip nested subdirectories, skip symlinks, deduplicate physical inodes/hardlinks, reuse `<= 32 KB` Stage-2 hashes (zero double-read), use `read_exact` loops, and add an optional **100% Byte-for-Byte Final Verify** pass.
+- **Pre-Trash Cryptographic Guard + Last-Copy Lock**: Re-verifies file size and BLAKE3 hash immediately before trashing, protects at least 1 copy per group, ignores 0-byte empty marker files by default, and surfaces skipped/failed files cleanly in-app.
+- **Professional UI & Multi-OS Polish**: Fixed Tailwind v4 styling tokens (`slate-850`/`920`), added `select-text` on paths/code/tables, exposed max-size + wildcard exclude globs + Protect Master Folder + CSV/JSON report export, windowed result pagination, UTF-8/Windows drop-path decoding, Windows Explorer `/select` & Linux DBus reveal, and Apple Silicon + Intel + Windows + Linux CI builds.
 
 ### 🚀 DupliSoft (MB.06) — Current Release
 - **📁 Drag-and-Drop Folders & Drives**: Drag any folder, drive, or volume directly from macOS Finder or Windows Explorer anywhere into the DupliSoft window to immediately queue it for scanning.

@@ -2,7 +2,8 @@ import React, { useState, useEffect, useMemo } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
-import { FolderDown } from "lucide-react";
+import { save } from "@tauri-apps/plugin-dialog";
+import { FolderDown, AlertTriangle, CheckCircle2, Info, X } from "lucide-react";
 import { Header } from "./components/Header";
 import { Sidebar } from "./components/Sidebar";
 import { ProgressBanner } from "./components/ProgressBanner";
@@ -16,9 +17,17 @@ import {
   ScanOptions,
   ScanProgress,
   ScanResult,
+  TrashRequestItem,
   TrashResult,
 } from "./types";
+import { formatBytes } from "./utils/formatters";
 import "./App.css";
+
+interface StatusNotice {
+  kind: "success" | "warning" | "error" | "info";
+  title: string;
+  detail?: string;
+}
 
 export const App: React.FC = () => {
   const [directories, setDirectories] = useState<string[]>([]);
@@ -27,6 +36,10 @@ export const App: React.FC = () => {
     min_size: 0,
     exclude_patterns: [],
     check_hidden: false,
+    ignore_empty_files: true,
+    verify_byte_for_byte: false,
+    skip_symlinks: true,
+    deduplicate_hardlinks: true,
   });
 
   const [isScanning, setIsScanning] = useState<boolean>(false);
@@ -42,6 +55,7 @@ export const App: React.FC = () => {
   const [scanResult, setScanResult] = useState<ScanResult | null>(null);
   const [selectedFilePaths, setSelectedFilePaths] = useState<Set<string>>(new Set());
   const [categoryFilter, setCategoryFilter] = useState<FileCategory>("all");
+  const [statusNotice, setStatusNotice] = useState<StatusNotice | null>(null);
 
   // Modal states
   const [previewGroup, setPreviewGroup] = useState<DuplicateGroup | null>(null);
@@ -64,7 +78,7 @@ export const App: React.FC = () => {
     }
   };
 
-  // 1. Native Tauri Window Drag-and-Drop Handler
+  // 1. Native Tauri Window Drag-and-Drop Handler (works on macOS, Windows, Linux)
   useEffect(() => {
     let unlistenDragDrop: (() => void) | undefined;
 
@@ -114,7 +128,7 @@ export const App: React.FC = () => {
       if (e.dataTransfer?.files && e.dataTransfer.files.length > 0) {
         const filePaths: string[] = [];
         for (let i = 0; i < e.dataTransfer.files.length; i++) {
-          const f = e.dataTransfer.files[i] as any;
+          const f = e.dataTransfer.files[i] as File & { path?: string };
           if (f.path) filePaths.push(f.path);
         }
         if (filePaths.length > 0) {
@@ -155,6 +169,7 @@ export const App: React.FC = () => {
     setIsScanning(true);
     setSelectedFilePaths(new Set());
     setScanResult(null);
+    setStatusNotice(null);
 
     const scanOptions: ScanOptions = {
       ...options,
@@ -166,8 +181,34 @@ export const App: React.FC = () => {
         options: scanOptions,
       });
       setScanResult(result);
+
+      const skippedCount = result.skipped_files_count ?? 0;
+      const emptyIgnored = result.empty_files_ignored ?? 0;
+      const hardlinksSkipped = result.hardlinks_skipped ?? 0;
+
+      if (skippedCount > 0) {
+        setStatusNotice({
+          kind: "warning",
+          title: `Scan finished (${result.scan_duration_ms}ms) — ${skippedCount} unreadable file(s) skipped`,
+          detail: result.skipped_files_sample
+            ?.slice(0, 2)
+            .map(([p, reason]) => `${p}: ${reason}`)
+            .join(" | "),
+        });
+      } else if (emptyIgnored > 0 || hardlinksSkipped > 0) {
+        setStatusNotice({
+          kind: "info",
+          title: `Scan verified ${result.total_files_scanned.toLocaleString()} files in ${result.scan_duration_ms}ms`,
+          detail: `Safely skipped ${emptyIgnored} empty marker file(s) and ${hardlinksSkipped} hardlink alias(es).`,
+        });
+      }
     } catch (err) {
-      console.error("Scan error or cancelled:", err);
+      const msg = String(err);
+      setStatusNotice({
+        kind: msg.toLowerCase().includes("cancel") ? "info" : "error",
+        title: msg.toLowerCase().includes("cancel") ? "Scan Cancelled" : "Scan Error",
+        detail: msg,
+      });
     } finally {
       setIsScanning(false);
     }
@@ -197,27 +238,55 @@ export const App: React.FC = () => {
     try {
       await invoke("reveal_file", { path });
     } catch (err) {
-      console.error("Failed to reveal file in manager:", err);
+      setStatusNotice({
+        kind: "error",
+        title: "Unable to open file in Explorer / Finder",
+        detail: String(err),
+      });
     }
   };
 
-  // Calculate selected files and reclaimable bytes
-  const { selectedCount, selectedWastedBytes, selectedPathsList } = useMemo(() => {
+  // Calculate selected files, reclaimable bytes, and check last-copy safety
+  const {
+    selectedCount,
+    selectedWastedBytes,
+    selectedPathsList,
+    selectedTrashItems,
+    unsafeAllSelectedGroupsCount,
+  } = useMemo(() => {
     if (!scanResult) {
-      return { selectedCount: 0, selectedWastedBytes: 0, selectedPathsList: [] };
+      return {
+        selectedCount: 0,
+        selectedWastedBytes: 0,
+        selectedPathsList: [],
+        selectedTrashItems: [],
+        unsafeAllSelectedGroupsCount: 0,
+      };
     }
 
     let count = 0;
     let bytes = 0;
+    let unsafeGroups = 0;
     const paths: string[] = [];
+    const items: TrashRequestItem[] = [];
 
     for (const group of scanResult.groups) {
+      let groupSelected = 0;
       for (const file of group.files) {
         if (selectedFilePaths.has(file.path)) {
           count++;
+          groupSelected++;
           bytes += file.size;
           paths.push(file.path);
+          items.push({
+            path: file.path,
+            expected_size: file.size,
+            expected_hash: group.hash,
+          });
         }
+      }
+      if (groupSelected >= group.files.length && group.files.length > 0) {
+        unsafeGroups++;
       }
     }
 
@@ -225,21 +294,22 @@ export const App: React.FC = () => {
       selectedCount: count,
       selectedWastedBytes: bytes,
       selectedPathsList: paths,
+      selectedTrashItems: items,
+      unsafeAllSelectedGroupsCount: unsafeGroups,
     };
   }, [scanResult, selectedFilePaths]);
 
   const handleConfirmTrash = async () => {
-    if (selectedPathsList.length === 0) return;
+    if (selectedTrashItems.length === 0 || unsafeAllSelectedGroupsCount > 0) return;
     setIsDeleting(true);
 
     try {
-      const res = await invoke<TrashResult>("trash_files", {
-        paths: selectedPathsList,
+      const res = await invoke<TrashResult>("trash_files_verified", {
+        items: selectedTrashItems,
       });
 
       const deletedSet = new Set(res.successful);
 
-      // Remove deleted files from state
       if (scanResult) {
         const updatedGroups: DuplicateGroup[] = [];
 
@@ -266,24 +336,113 @@ export const App: React.FC = () => {
         });
       }
 
-      // Clear deleted from selection set
       setSelectedFilePaths((prev) => {
         const next = new Set(prev);
         deletedSet.forEach((p) => next.delete(p));
         return next;
       });
 
+      if (res.failed.length > 0) {
+        setStatusNotice({
+          kind: "warning",
+          title: `Moved ${res.successful.length} file(s) to Trash; ${res.failed.length} skipped/failed`,
+          detail: res.failed
+            .slice(0, 3)
+            .map(([p, reason]) => `${p}: ${reason}`)
+            .join(" | "),
+        });
+      } else {
+        setStatusNotice({
+          kind: "success",
+          title: `Safely moved ${res.successful.length} duplicate(s) to Trash`,
+          detail: `Reclaimed ${formatBytes(res.total_freed_bytes)} of disk space.`,
+        });
+      }
+
       setIsTrashModalOpen(false);
     } catch (err) {
-      console.error("Failed to trash files:", err);
+      setStatusNotice({
+        kind: "error",
+        title: "Trash operation failed",
+        detail: String(err),
+      });
     } finally {
       setIsDeleting(false);
+    }
+  };
+
+  const handleExportReport = async () => {
+    if (!scanResult || scanResult.groups.length === 0) return;
+
+    try {
+      const targetPath = await save({
+        title: "Export DupliSoft Audit Report",
+        defaultPath: "duplisoft-duplicates-report.csv",
+        filters: [
+          { name: "CSV Spreadsheet", extensions: ["csv"] },
+          { name: "JSON Report", extensions: ["json"] },
+        ],
+      });
+
+      if (!targetPath) return;
+
+      let content = "";
+      if (targetPath.toLowerCase().endsWith(".json")) {
+        content = JSON.stringify(scanResult, null, 2);
+      } else {
+        const rows = [
+          [
+            "GroupID",
+            "Hash",
+            "ByteVerified",
+            "FileSizeBytes",
+            "Status",
+            "Filename",
+            "Directory",
+            "FullPath",
+          ].join(","),
+        ];
+        const escapeCsv = (val: string) => `"${val.replace(/"/g, '""')}"`;
+
+        for (const g of scanResult.groups) {
+          for (const f of g.files) {
+            const status = selectedFilePaths.has(f.path) ? "MarkedForTrash" : "Kept";
+            rows.push(
+              [
+                escapeCsv(g.id),
+                escapeCsv(g.hash),
+                String(Boolean(g.byte_verified)),
+                String(f.size),
+                status,
+                escapeCsv(f.filename),
+                escapeCsv(f.directory),
+                escapeCsv(f.path),
+              ].join(",")
+            );
+          }
+        }
+        content = rows.join("\n");
+      }
+
+      await invoke("save_text_file", { path: targetPath, content });
+      setStatusNotice({
+        kind: "success",
+        title: "Audit report exported",
+        detail: targetPath,
+      });
+    } catch (err) {
+      setStatusNotice({
+        kind: "error",
+        title: "Failed to export report",
+        detail: String(err),
+      });
     }
   };
 
   const handleResetScan = () => {
     setScanResult(null);
     setSelectedFilePaths(new Set());
+    setStatusNotice(null);
     setProgress({
       phase: "indexing",
       files_scanned: 0,
@@ -302,9 +461,11 @@ export const App: React.FC = () => {
           <div className="p-6 rounded-3xl bg-indigo-600/25 text-indigo-400 mb-4 border border-indigo-500/40 shadow-xl shadow-indigo-500/10 animate-bounce">
             <FolderDown className="w-16 h-16" />
           </div>
-          <h3 className="text-2xl font-bold text-white tracking-tight mb-2">Drop Folders or Drives to Queue Scan</h3>
+          <h3 className="text-2xl font-bold text-white tracking-tight mb-2">
+            Drop Folders or Drives to Queue Scan
+          </h3>
           <p className="text-sm text-slate-300 max-w-md text-center">
-            Release to add folders directly to Target Directories for duplicate file inspection
+            Release to add folders directly to Target Directories for duplicate inspection
           </p>
         </div>
       )}
@@ -317,15 +478,17 @@ export const App: React.FC = () => {
         selectedCount={selectedCount}
         selectedWastedBytes={selectedWastedBytes}
         isScanning={isScanning}
+        hasResults={Boolean(scanResult && scanResult.groups.length > 0)}
         onOpenTrashConfirm={() => setIsTrashModalOpen(true)}
         onResetScan={handleResetScan}
+        onExportReport={handleExportReport}
       />
 
       {/* Real-time Progress Bar */}
       <ProgressBanner progress={progress} isScanning={isScanning} />
 
       {/* Main Workspace Layout */}
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 min-h-0 flex overflow-hidden">
         {/* Left Sidebar */}
         <Sidebar
           directories={directories}
@@ -338,7 +501,46 @@ export const App: React.FC = () => {
         />
 
         {/* Center Content & Results View */}
-        <main className="flex-1 flex flex-col bg-slate-920 overflow-hidden">
+        <main className="flex-1 min-w-0 min-h-0 flex flex-col bg-slate-950 overflow-hidden">
+          {/* Status / Error / Safety Notification Banner */}
+          {statusNotice && (
+            <div
+              className={`px-5 py-2.5 border-b flex items-center justify-between gap-3 text-xs shrink-0 ${
+                statusNotice.kind === "error"
+                  ? "bg-rose-950/50 border-rose-500/30 text-rose-200"
+                  : statusNotice.kind === "warning"
+                  ? "bg-amber-950/40 border-amber-500/30 text-amber-200"
+                  : statusNotice.kind === "success"
+                  ? "bg-emerald-950/40 border-emerald-500/30 text-emerald-200"
+                  : "bg-indigo-950/40 border-indigo-500/30 text-indigo-200"
+              }`}
+            >
+              <div className="flex items-center space-x-2 min-w-0">
+                {statusNotice.kind === "error" || statusNotice.kind === "warning" ? (
+                  <AlertTriangle className="w-4 h-4 shrink-0" />
+                ) : statusNotice.kind === "success" ? (
+                  <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" />
+                ) : (
+                  <Info className="w-4 h-4 shrink-0 text-indigo-400" />
+                )}
+                <div className="min-w-0">
+                  <span className="font-semibold">{statusNotice.title}</span>
+                  {statusNotice.detail && (
+                    <span className="ml-2 text-[11px] opacity-80 truncate select-text">
+                      {statusNotice.detail}
+                    </span>
+                  )}
+                </div>
+              </div>
+              <button
+                onClick={() => setStatusNotice(null)}
+                className="p-1 hover:bg-white/10 rounded transition cursor-pointer shrink-0"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
+
           {scanResult && scanResult.groups.length > 0 && (
             <SmartSelectBar
               groups={scanResult.groups}
@@ -361,7 +563,7 @@ export const App: React.FC = () => {
         </main>
       </div>
 
-      {/* Interactive Preview Modal (Deep Zoom & Side-by-Side Video Player) */}
+      {/* Interactive Preview Modal */}
       {previewGroup && (
         <PreviewModal
           group={previewGroup}
@@ -372,12 +574,13 @@ export const App: React.FC = () => {
         />
       )}
 
-      {/* Safe Move-to-Trash Confirmation Dialog */}
+      {/* Safe Verified Move-to-Trash Confirmation Dialog */}
       {isTrashModalOpen && (
         <TrashConfirmModal
           selectedCount={selectedCount}
           selectedBytes={selectedWastedBytes}
           selectedPaths={selectedPathsList}
+          unsafeAllSelectedGroupsCount={unsafeAllSelectedGroupsCount}
           isDeleting={isDeleting}
           onConfirm={handleConfirmTrash}
           onClose={() => setIsTrashModalOpen(false)}

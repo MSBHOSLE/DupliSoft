@@ -89,14 +89,14 @@ if [ ! -f "$RELEASES_MD" ]; then
   cat <<EOL > "$RELEASES_MD"
 # DupliSoft Release Registry 📦
 
-All versions follow the standard format: \`DupliSoft (MB.XX)\` with \`MB.\` constant and 2-digit numerical increments.
+All versions follow the standard format: \`DupliSoft (MB.XX)\` where \`MB.\` is constant and \`XX\` is a 2-digit zero-padded number.
 
-| Version | Release Name | Date | File Size | SHA-256 Checksum |
-| :--- | :--- | :--- | :--- | :--- |
+| Version | Release Name | Date | Platform | File Size | SHA-256 Checksum |
+| :--- | :--- | :--- | :--- | :--- | :--- |
 EOL
 fi
 
-NEW_ENTRY="| \`${NEXT_VERSION}\` | **${RELEASE_NAME}** | ${DATE_STR} | ${FILE_SIZE} | \`${SHA256}\` |"
+NEW_ENTRY="| \`${NEXT_VERSION}\` | **${RELEASE_NAME}** | ${DATE_STR} | macOS (\`.dmg\`) | ${FILE_SIZE} | \`${SHA256}\` |"
 if grep -q "| \`${NEXT_VERSION}\` |" "$RELEASES_MD"; then
   sed -i '' "s/| \`${NEXT_VERSION}\` |.*/$NEW_ENTRY/" "$RELEASES_MD" || true
 else

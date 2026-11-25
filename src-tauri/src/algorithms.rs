@@ -31,8 +31,8 @@ pub struct SimilarPhotoMatch {
 pub fn compute_image_dhash(path: &Path) -> Result<u64, String> {
     let img = image::open(path).map_err(|e| format!("Failed to open image: {}", e))?;
     
-    // Fast downscale to 9 columns x 8 rows in grayscale
-    let gray_small = img.resize_exact(9, 8, FilterType::Nearest).to_luma8();
+    // High-quality Triangle downscale to 9 columns x 8 rows in grayscale (avoids nearest-neighbor aliasing)
+    let gray_small = img.resize_exact(9, 8, FilterType::Triangle).to_luma8();
     
     let mut hash: u64 = 0;
     let mut bit_index = 0;
@@ -70,8 +70,8 @@ pub fn compute_image_quality(path: &Path) -> Result<ImageQuality, String> {
     let img = image::open(path).map_err(|e| format!("Failed to open image: {}", e))?;
     let (width, height) = img.dimensions();
 
-    // Fast 256x256 grayscale sample for microsecond variance computation
-    let sample = img.resize(256, 256, FilterType::Nearest).to_luma8();
+    // Filtered 256x256 grayscale sample for accurate sharpness & blur variance computation
+    let sample = img.resize(256, 256, FilterType::Triangle).to_luma8();
     let (sw, sh) = sample.dimensions();
 
     if sw < 3 || sh < 3 {

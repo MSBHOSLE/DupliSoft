@@ -1,11 +1,17 @@
 use serde::{Deserialize, Serialize};
 
+fn default_true() -> bool {
+    true
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FileEntry {
     pub path: String,
     pub filename: String,
     pub size: u64,
     pub modified: u64,
+    #[serde(default)]
+    pub modified_ms: u64,
     pub extension: String,
     pub directory: String,
 }
@@ -16,6 +22,8 @@ pub struct DuplicateGroup {
     pub hash: String,
     pub size: u64,
     pub wasted_bytes: u64,
+    #[serde(default)]
+    pub byte_verified: bool,
     pub files: Vec<FileEntry>,
 }
 
@@ -26,11 +34,19 @@ pub struct ScanOptions {
     pub max_size: Option<u64>,
     pub exclude_patterns: Vec<String>,
     pub check_hidden: bool,
+    #[serde(default = "default_true")]
+    pub ignore_empty_files: bool,
+    #[serde(default)]
+    pub verify_byte_for_byte: bool,
+    #[serde(default = "default_true")]
+    pub skip_symlinks: bool,
+    #[serde(default = "default_true")]
+    pub deduplicate_hardlinks: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ScanProgress {
-    pub phase: String, // "indexing" | "chunk_hashing" | "full_hashing" | "completed"
+    pub phase: String, // "indexing" | "chunk_hashing" | "full_hashing" | "byte_verifying" | "completed"
     pub files_scanned: u64,
     pub total_candidates: u64,
     pub current_file: String,
@@ -45,6 +61,21 @@ pub struct ScanResult {
     pub total_duplicates_found: usize,
     pub total_wasted_bytes: u64,
     pub scan_duration_ms: u64,
+    #[serde(default)]
+    pub skipped_files_count: usize,
+    #[serde(default)]
+    pub skipped_files_sample: Vec<(String, String)>,
+    #[serde(default)]
+    pub hardlinks_skipped: usize,
+    #[serde(default)]
+    pub empty_files_ignored: usize,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct TrashRequestItem {
+    pub path: String,
+    pub expected_size: Option<u64>,
+    pub expected_hash: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -150,4 +181,3 @@ pub struct NotebookPreview {
     pub cells: Vec<NotebookCell>,
     pub is_truncated: bool,
 }
-

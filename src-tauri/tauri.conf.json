@@ -1,7 +1,7 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "DupliSoft",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "identifier": "com.duplisoft.finder",
   "build": {
     "beforeDevCommand": "npm run dev",
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "DupliSoft (MB.06) — Duplicate File Finder & Previewer | Developer: Mahesh Sanjayrao Bhosle",
+        "title": "DupliSoft (MB.07) — Duplicate File Finder & Inspector | Developer: Mahesh Sanjayrao Bhosle",
         "width": 1280,
         "height": 850,
         "minWidth": 960,

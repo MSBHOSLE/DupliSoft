@@ -3,6 +3,7 @@ export interface FileEntry {
   filename: string;
   size: u64;
   modified: u64;
+  modified_ms?: u64;
   extension: string;
   directory: string;
 }
@@ -14,6 +15,7 @@ export interface DuplicateGroup {
   hash: string;
   size: u64;
   wasted_bytes: u64;
+  byte_verified?: boolean;
   files: FileEntry[];
 }
 
@@ -23,10 +25,14 @@ export interface ScanOptions {
   max_size?: u64;
   exclude_patterns: string[];
   check_hidden: boolean;
+  ignore_empty_files: boolean;
+  verify_byte_for_byte: boolean;
+  skip_symlinks: boolean;
+  deduplicate_hardlinks: boolean;
 }
 
 export interface ScanProgress {
-  phase: "indexing" | "chunk_hashing" | "full_hashing" | "completed";
+  phase: "indexing" | "chunk_hashing" | "full_hashing" | "byte_verifying" | "completed";
   files_scanned: u64;
   total_candidates: u64;
   current_file: string;
@@ -40,6 +46,16 @@ export interface ScanResult {
   total_duplicates_found: number;
   total_wasted_bytes: u64;
   scan_duration_ms: u64;
+  skipped_files_count?: number;
+  skipped_files_sample?: [string, string][];
+  hardlinks_skipped?: number;
+  empty_files_ignored?: number;
+}
+
+export interface TrashRequestItem {
+  path: string;
+  expected_size?: u64;
+  expected_hash?: string;
 }
 
 export interface TrashResult {
@@ -151,4 +167,3 @@ export interface NotebookPreview {
   cells: NotebookCell[];
   is_truncated: boolean;
 }
-

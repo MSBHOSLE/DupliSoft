@@ -172,7 +172,12 @@ fn format_cell(data: &Data) -> String {
             if f.fract() == 0.0 && *f >= i64::MIN as f64 && *f <= i64::MAX as f64 {
                 format!("{}", *f as i64)
             } else {
-                format!("{:.2}", f)
+                // Preserve meaningful decimal precision (up to 8 places) instead of rounding to 2 decimals
+                let formatted = format!("{:.8}", f);
+                formatted
+                    .trim_end_matches('0')
+                    .trim_end_matches('.')
+                    .to_string()
             }
         }
         Data::Int(i) => i.to_string(),

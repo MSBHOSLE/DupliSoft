@@ -52,17 +52,25 @@ pub fn load_text_preview(
 
     let limit = max_lines.unwrap_or(DEFAULT_MAX_TEXT_LINES);
     let file = File::open(path).map_err(|e| format!("Cannot open text file: {}", e))?;
-    let reader = BufReader::new(file);
+    let mut reader = BufReader::new(file);
 
     let mut lines = Vec::new();
     let mut total_lines = 0;
     let mut total_words = 0;
     let mut total_chars = 0;
     let mut is_truncated = false;
+    let mut raw_buf = Vec::new();
 
-    for line_res in reader.lines() {
-        match line_res {
-            Ok(line) => {
+    loop {
+        raw_buf.clear();
+        match reader.read_until(b'\n', &mut raw_buf) {
+            Ok(0) => break,
+            Ok(_) => {
+                while matches!(raw_buf.last(), Some(b'\n' | b'\r')) {
+                    raw_buf.pop();
+                }
+                // Decode lossy UTF-8 so non-UTF-8 lines are visible rather than silently dropped
+                let line = String::from_utf8_lossy(&raw_buf).into_owned();
                 total_lines += 1;
                 total_chars += line.len();
                 total_words += line.split_whitespace().count();
@@ -73,10 +81,7 @@ pub fn load_text_preview(
                     is_truncated = true;
                 }
             }
-            Err(_) => {
-                // If invalid UTF-8 byte, continue gracefully
-                continue;
-            }
+            Err(_) => break,
         }
     }
 
@@ -368,8 +373,18 @@ pub fn load_archive_preview(
     }
 
     let limit = max_entries.unwrap_or(DEFAULT_MAX_ARCHIVE_ENTRIES);
+    let ext = path
+        .extension()
+        .and_then(|e| e.to_str())
+        .unwrap_or("archive")
+        .to_lowercase();
     let file = File::open(path).map_err(|e| format!("Cannot open archive file: {}", e))?;
-    let mut archive = ZipArchive::new(file).map_err(|e| format!("Not a valid ZIP archive: {}", e))?;
+    let mut archive = ZipArchive::new(file).map_err(|_| {
+        format!(
+            "Archive contents preview currently supports .zip containers (.{} verified by cryptographic BLAKE3 hash).",
+            ext
+        )
+    })?;
 
     let total_entries = archive.len();
     let mut total_uncompressed_bytes: u64 = 0;
