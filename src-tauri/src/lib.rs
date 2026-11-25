@@ -289,20 +289,28 @@ mod tests {
 
     #[test]
     fn test_clean_path_string() {
-        assert_eq!(clean_path_string("/path/to/folder"), "/path/to/folder");
-        assert_eq!(clean_path_string("file:///path/to/folder"), "/path/to/folder");
+        let expected_folder = std::path::PathBuf::from("/path/to/folder").to_string_lossy().to_string();
+        assert_eq!(clean_path_string("/path/to/folder"), expected_folder);
+        assert_eq!(clean_path_string("file:///path/to/folder"), expected_folder);
+        let expected_docs = std::path::PathBuf::from("/Users/john/My Documents").to_string_lossy().to_string();
         assert_eq!(
             clean_path_string("file://localhost/Users/john/My%20Documents"),
-            "/Users/john/My Documents"
+            expected_docs
         );
+        let expected_cafe = std::path::PathBuf::from("/Users/josé/Café").to_string_lossy().to_string();
         assert_eq!(
             clean_path_string("file:///Users/jos%C3%A9/Caf%C3%A9"),
-            "/Users/josé/Café"
+            expected_cafe
         );
         #[cfg(not(target_os = "windows"))]
         assert_eq!(
             clean_path_string("file:///C:/Users/Alice/Docs"),
             "C:/Users/Alice/Docs"
+        );
+        #[cfg(target_os = "windows")]
+        assert_eq!(
+            clean_path_string("file:///C:/Users/Alice/Docs"),
+            "C:\\Users\\Alice\\Docs"
         );
     }
 
