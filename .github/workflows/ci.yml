@@ -13,6 +13,10 @@ on:
       - master
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test-and-build:
     strategy:
@@ -20,25 +24,17 @@ jobs:
       matrix:
         include:
           - os: macos-latest
-            target: aarch64-apple-darwin
-            artifact_name: DupliSoft-macOS-AppleSilicon
-            bundle_path: src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg
-          - os: macos-latest
-            target: x86_64-apple-darwin
-            artifact_name: DupliSoft-macOS-Intel
-            bundle_path: src-tauri/target/x86_64-apple-darwin/release/bundle/dmg/*.dmg
+            target: universal-apple-darwin
+            rust_targets: aarch64-apple-darwin, x86_64-apple-darwin
+            artifact_name: DupliSoft-macOS-Universal
           - os: windows-latest
             target: x86_64-pc-windows-msvc
+            rust_targets: x86_64-pc-windows-msvc
             artifact_name: DupliSoft-Windows
-            bundle_path: |
-              src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/*.exe
-              src-tauri/target/x86_64-pc-windows-msvc/release/bundle/msi/*.msi
           - os: ubuntu-22.04
             target: x86_64-unknown-linux-gnu
+            rust_targets: x86_64-unknown-linux-gnu
             artifact_name: DupliSoft-Linux
-            bundle_path: |
-              src-tauri/target/x86_64-unknown-linux-gnu/release/bundle/deb/*.deb
-              src-tauri/target/x86_64-unknown-linux-gnu/release/bundle/appimage/*.AppImage
 
     runs-on: ${{ matrix.os }}
     permissions:
@@ -63,7 +59,7 @@ jobs:
       - name: Setup Rust toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
-          targets: ${{ matrix.target }}
+          targets: ${{ matrix.rust_targets }}
 
       - name: Rust Cache
         uses: swatinem/rust-cache@v2
@@ -86,9 +82,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           args: --target ${{ matrix.target }}
-          tagName: vMB.07
-          releaseName: "DupliSoft (MB.07)"
-          releaseBody: "Automated multi-platform release for DupliSoft (MB.07) — 100% Accuracy, Pro UI, macOS/Windows/Linux"
+          tagName: ${{ github.ref_name || 'vMB.07' }}
+          releaseName: "DupliSoft (${{ github.ref_name || 'MB.07' }})"
+          releaseBody: "Automated multi-platform release for DupliSoft (${{ github.ref_name || 'MB.07' }}) — 100% Accuracy, Pro UI, macOS/Windows/Linux"
           releaseDraft: false
           prerelease: false
 
@@ -96,4 +92,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact_name }}
-          path: ${{ matrix.bundle_path }}
+          path: |
+            src-tauri/target/**/bundle/dmg/*.dmg
+            src-tauri/target/**/bundle/nsis/*.exe
+            src-tauri/target/**/bundle/msi/*.msi
+            src-tauri/target/**/bundle/deb/*.deb
+            src-tauri/target/**/bundle/appimage/*.AppImage
+          if-no-files-found: ignore
