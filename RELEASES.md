@@ -10,6 +10,7 @@ All release artifacts are archived and permanently preserved in the [`releases/`
 
 | Version | Release Name | Date | Platform | File Size | SHA-256 Checksum |
 | :--- | :--- | :--- | :--- | :--- | :--- |
+| `MB.07` | **DupliSoft (MB.07)** | 2026-11-25 15:24:10 | macOS (`.dmg`) | 3.7M | `b1a0dab6e423e0b2c1dc89237a567b31f53813f3661040ae4bec44c02b319294` |
 | `MB.06` | **DupliSoft (MB.06)** | 2026-10-17 07:12:26 | macOS (`.dmg`) | 3.7M | `a346984e010fa0c4a8b34f7cb800e478e1dad3754462669f7e31b4711662d785` |
 | `MB.05` | **DupliSoft (MB.05)** | 2026-10-16 13:57:53 | macOS (`.dmg`) | 3.6 MB | `cfff3036f5c34ca5a397eae5fbd2b401d1e77b08cd4b3200681007d5f7196f90` |
 | `MB.05` | **DupliSoft (MB.05)** | 2026-10-16 14:38:00 | Windows (`.exe`) | 2.25 MB | `6a25390b6684ad88d89ad898acf89c9ae4ee32972f7ba1fad60d8d37650e2793` |
